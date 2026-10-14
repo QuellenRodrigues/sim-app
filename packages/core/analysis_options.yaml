@@ -1,0 +1,27 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  errors:
+    one_member_abstracts: ignore
+    todo: ignore
+    dead_code: error
+    invalid_annotation_target: false
+    constant_identifier_names: ignore
+    deprecated_member_use: ignore
+  exclude:
+    - build/**
+    - test/**
+
+formatter:
+  page_width: 110
+  trailing_commas: preserve
+
+linter:
+  rules:
+    require_trailing_commas: true
+    directives_ordering: true
+    prefer_relative_imports: true
+    library_private_types_in_public_api: false
+    prefer_single_quotes: true
+    unnecessary_lambdas: true
+    avoid_redundant_argument_values: true

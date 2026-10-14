@@ -1,0 +1,44 @@
+name: ds_kit
+description: "Design system do SIM: tokens, tipografia, tema e componentes."
+version: 0.0.1
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.9.0
+  flutter: '>=3.35.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  core:
+    path: ../core
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+  fonts:
+    - family: Jost
+      fonts:
+        - asset: assets/fonts/jost/Jost-Light.ttf
+          weight: 300
+        - asset: assets/fonts/jost/Jost-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/jost/Jost-Medium.ttf
+          weight: 500
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/inter/Inter-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/inter/Inter-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/inter/Inter-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/inter/Inter-Bold.ttf
+          weight: 700

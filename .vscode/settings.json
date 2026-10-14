@@ -1,0 +1,16 @@
+{
+  "editor.formatOnSave": true,
+  "dart.projectSearchDepth": 5,
+  "dart.lineLength": 110,
+  "dart.analysisExcludedFolders": [
+    "build",
+    "sim-app/build",
+    "packages/core/build",
+    "packages/ds_kit/build",
+    "packages/dependencies/build"
+  ],
+  "files.exclude": {
+    "**/.dart_tool": true,
+    "**/**.iml": true
+  }
+}

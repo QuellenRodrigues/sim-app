@@ -1,0 +1,48 @@
+name: sim_workspace
+description: Workspace do SIM — Sistema Integrado da Mecânica
+publish_to: none
+
+environment:
+  sdk: ^3.9.0
+  flutter: '>=3.35.0'
+
+workspace:
+  - sim-app
+  - packages/core
+  - packages/ds_kit
+  - packages/dependencies
+
+dev_dependencies:
+  melos: ^7.0.0
+
+melos:
+  name: sim_workspace
+
+  scripts:
+    analyze:
+      run: melos exec -- flutter analyze --fatal-infos
+      description: Analisa todos os pacotes com flutter analyze
+
+    test:
+      run: melos exec --dir-exists=test -- flutter test
+      description: Roda os testes em todos os pacotes que possuem diretório test/
+
+    test:coverage:
+      run: melos exec --dir-exists=test -- flutter test --coverage
+      description: Roda os testes com cobertura de código
+
+    clean:
+      run: melos exec -- flutter clean
+      description: Executa flutter clean em todos os pacotes
+
+    format:
+      run: melos exec -- dart format . --set-exit-if-changed
+      description: Verifica formatação em todos os pacotes
+
+    format:fix:
+      run: melos exec -- dart format .
+      description: Corrige formatação em todos os pacotes
+
+    web:
+      run: melos exec --scope=app -- flutter run -d chrome
+      description: Roda o sim-app no Chrome

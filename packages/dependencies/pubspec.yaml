@@ -1,0 +1,32 @@
+name: dependencies
+description: "Dependências externas centralizadas do SIM."
+version: 0.0.1
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.9.0
+  flutter: '>=3.35.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_modular: ^6.4.1
+  flutter_bloc: ^9.1.1
+  equatable: ^2.0.8
+  fpdart: ^1.2.0
+  flutter_svg: ^2.2.4
+  intl: any
+  logger: ^2.7.0
+  ds_kit:
+    path: ../ds_kit
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
