@@ -1,7 +1,7 @@
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
-/// Logotipo do SIM: wordmark "sim" + símbolo de check em duas faixas.
+/// Logotipo do SIM: wordmark "SIM" + símbolo da caixa marcada com o check verde.
 ///
 /// ```dart
 /// const SimLogo(height: 32)                  // horizontal
@@ -29,7 +29,7 @@ class SimLogo extends StatelessWidget {
   /// Versão para fundos escuros/púrpura.
   final bool negativo;
 
-  /// Exibe "sistema integrado da mecânica" abaixo do logo.
+  /// Exibe "Sistema Integrado da Mecânica" abaixo do logo.
   final bool mostrarAssinatura;
 
   final bool _somenteSimbolo;
@@ -39,8 +39,8 @@ class SimLogo extends StatelessWidget {
     final simbolo = SvgPicture.asset(
       negativo ? AppAssets.logoSimboloNegativoSvg : AppAssets.logoSimboloSvg,
       package: AppAssets.package,
-      width: _somenteSimbolo ? height * 0.8 : height,
-      height: _somenteSimbolo ? height * 0.8 : height,
+      width: _somenteSimbolo ? height * 0.8 : height * 1.1,
+      height: _somenteSimbolo ? height * 0.8 : height * 1.1,
     );
 
     if (_somenteSimbolo) {
@@ -60,10 +60,10 @@ class SimLogo extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          ExcludeSemantics(child: Text('sim', style: SimTypography.wordmark(height * 1.12, cor))),
-          SizedBox(width: height * 0.1),
+          ExcludeSemantics(child: Text('SIM', style: SimTypography.wordmark(height * 1.12, cor))),
+          SizedBox(width: height * 0.16),
           Padding(
-            padding: EdgeInsets.only(bottom: height * 0.04),
+            padding: EdgeInsets.only(bottom: height * 0.12),
             child: simbolo,
           ),
         ],
@@ -79,10 +79,10 @@ class SimLogo extends StatelessWidget {
         logo,
         SizedBox(height: height * 0.18),
         Text(
-          'sistema integrado da mecânica',
-          style: SimTypography.wordmark(height * 0.26, cor.withValues(alpha: 0.8)).copyWith(
+          'Sistema Integrado da Mecânica',
+          style: SimTypography.wordmark(height * 0.27, cor.withValues(alpha: 0.85)).copyWith(
             fontWeight: FontWeight.w400,
-            letterSpacing: 0.2,
+            letterSpacing: 0.1,
           ),
         ),
       ],
