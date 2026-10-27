@@ -39,7 +39,18 @@ class _MenuPageState extends ViewState<MenuPage, MenuViewModel> {
               body: Row(
                 children: [
                   _menu(state, compacto: compacto),
-                  const Expanded(child: RouterOutlet()),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        MenuBarraSuperior(
+                          onBuscar: (_) => mostrarFuncionalidadeNaoImplementada(context),
+                          onNotificacoes: () => mostrarFuncionalidadeNaoImplementada(context),
+                          onNovaEncomenda: () => mostrarFuncionalidadeNaoImplementada(context),
+                        ),
+                        const Expanded(child: RouterOutlet()),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             );
@@ -52,17 +63,21 @@ class _MenuPageState extends ViewState<MenuPage, MenuViewModel> {
   Widget _layoutCelular(MenuState state) {
     return SimScaffold(
       appBar: AppBar(
-        title: const SimLogo(height: 22),
-        leading: Builder(
-          builder: (context) => IconButton(
-            tooltip: 'Abrir menu',
-            icon: const Icon(Icons.menu),
-            onPressed: () => Scaffold.of(context).openDrawer(),
+        backgroundColor: SimTokens.colorSidebar,
+        foregroundColor: SimTokens.colorWhite,
+        shape: const Border(),
+        title: const SimLogo(height: 22, negativo: true),
+        actions: [
+          IconButton(
+            tooltip: 'Notificações',
+            onPressed: () => mostrarFuncionalidadeNaoImplementada(context),
+            icon: const Icon(Icons.notifications_none),
           ),
-        ),
+        ],
       ),
       drawer: Drawer(
         width: SimSideMenu.larguraExpandida,
+        backgroundColor: SimTokens.colorSidebar,
         shape: const RoundedRectangleBorder(),
         child: Builder(
           builder: (context) => _menu(
@@ -79,16 +94,25 @@ class _MenuPageState extends ViewState<MenuPage, MenuViewModel> {
   Widget _menu(MenuState state, {required bool compacto, VoidCallback? aoSelecionar}) {
     return SimSideMenu(
       compacto: compacto,
-      header: compacto ? const SimLogo.simbolo(height: 30) : const SimLogo(height: 26),
+      header: compacto ? const SimLogo.simbolo(negativo: true) : const SimLogo(height: 28, negativo: true),
       currentIndex: state.currentIndex,
       items: MenuRoutesEnum.values
-          .map((item) => SimMenuOption(label: item.name, icon: item.icon, selectedIcon: item.selectedIcon))
+          .map(
+            (item) => SimMenuOption(
+              label: item.name,
+              icon: item.icon,
+              selectedIcon: item.selectedIcon,
+              secao: item.secao,
+            ),
+          )
           .toList(),
       onChanged: (index) {
         aoSelecionar?.call();
         _selecionar(index);
       },
-      footer: MenuRodape(
+      footer: MenuUsuarioCard(
+        nome: state.usuarioNome,
+        perfil: state.usuarioPerfil,
         compacto: compacto,
         onConfiguracoes: () => mostrarFuncionalidadeNaoImplementada(context),
       ),

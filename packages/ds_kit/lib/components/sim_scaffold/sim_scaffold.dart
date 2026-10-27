@@ -10,7 +10,7 @@ class SimScaffold extends StatelessWidget {
     this.appBar,
     this.drawer,
     this.floatingActionButton,
-    this.backgroundColor = SimTokens.colorNeutral50,
+    this.backgroundColor = SimTokens.colorBackground,
   });
 
   final Widget body;

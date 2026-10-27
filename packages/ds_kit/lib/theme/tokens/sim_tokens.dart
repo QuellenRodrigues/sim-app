@@ -30,6 +30,26 @@ class SimTokens {
   static const colorNeutral100 = SimColors.aco100;
   static const colorNeutral50 = SimColors.aco50;
   static const transparent = SimColors.transparent;
+  static const colorBackground = SimColors.gelo;
+  static const colorBorder = SimColors.geloBorda;
+
+  // Sidebar (menu lateral escuro)
+  static const colorSidebar = SimColors.noite;
+  static const colorSidebarSurface = SimColors.noiteSuperficie;
+  static const colorSidebarBorder = SimColors.noiteBorda;
+  static const colorSidebarText = SimColors.noiteTexto;
+  static const colorSidebarTextMuted = SimColors.noiteTextoSuave;
+  static const colorSidebarLabel = SimColors.noiteRotulo;
+
+  // Highlight (faixa de destaque em púrpura escuro)
+  static const colorHighlight = SimColors.purpuraNoite;
+  static const colorHighlightSurface = SimColors.purpuraNoiteMedia;
+  static const colorHighlightStripe = SimColors.purpuraNoiteFaixa;
+  static const colorHighlightBorder = SimColors.purpuraNoiteClara;
+  static const colorHighlightText = SimColors.lavandaTexto;
+  static const colorHighlightMuted = SimColors.lavandaClara;
+  static const colorHighlightSuccess = SimColors.verdeClaro;
+  static const colorHighlightWarning = SimColors.ambarClaro;
 
   // Success
   static const colorSuccess700 = SimColors.verdeMata;
@@ -45,6 +65,8 @@ class SimTokens {
   static const colorError700 = SimColors.vermelhoEscuro;
   static const colorError500 = SimColors.vermelho;
   static const colorError100 = SimColors.rosado;
+  static const colorErrorBorder = SimColors.rosadoBorda;
+  static const colorError50 = SimColors.rosadoNevoa;
 
   // Info
   static const colorInfo700 = SimColors.azulEscuro;

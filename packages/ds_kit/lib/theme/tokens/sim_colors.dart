@@ -19,7 +19,7 @@ abstract final class SimColors {
   /// #463873
   static const Color purpuraProfunda = Color(0xFF463873);
 
-  /// #5A4790 — cor primária da marca (faixa curta do símbolo)
+  /// #5A4790 — cor primária da marca
   static const Color purpuraSim = Color(0xFF5A4790);
 
   /// #8B7BBF
@@ -34,7 +34,7 @@ abstract final class SimColors {
   /// #237A39
   static const Color verdeMata = Color(0xFF237A39);
 
-  /// #2E9E4A — verde "aprovado" (faixa longa do símbolo)
+  /// #2E9E4A — verde "aprovado" (check do símbolo)
   static const Color verdeAprovado = Color(0xFF2E9E4A);
 
   /// #7FD68F — verde do símbolo sobre fundos escuros
@@ -46,7 +46,7 @@ abstract final class SimColors {
   /// #1A1A1F
   static const Color grafiteProfundo = Color(0xFF1A1A1F);
 
-  /// #2B2D33 — wordmark "sim"
+  /// #2B2D33 — wordmark "SIM" e caixa do símbolo
   static const Color grafite = Color(0xFF2B2D33);
 
   /// #3B3B45
@@ -73,8 +73,11 @@ abstract final class SimColors {
   /// #F7F7F9
   static const Color aco50 = Color(0xFFF7F7F9);
 
-  /// #A87405
-  static const Color ambarEscuro = Color(0xFFA87405);
+  /// #8A5F04
+  static const Color ambarEscuro = Color(0xFF8A5F04);
+
+  /// #F2BE4A — âmbar sobre fundos escuros
+  static const Color ambarClaro = Color(0xFFF2BE4A);
 
   /// #D99A0B
   static const Color ambar = Color(0xFFD99A0B);
@@ -91,6 +94,12 @@ abstract final class SimColors {
   /// #FADCDA
   static const Color rosado = Color(0xFFFADCDA);
 
+  /// #F0B8B4
+  static const Color rosadoBorda = Color(0xFFF0B8B4);
+
+  /// #FDF1F0
+  static const Color rosadoNevoa = Color(0xFFFDF1F0);
+
   /// #2A5F9C
   static const Color azulEscuro = Color(0xFF2A5F9C);
 
@@ -99,4 +108,47 @@ abstract final class SimColors {
 
   /// #DCE9F8
   static const Color celeste = Color(0xFFDCE9F8);
+
+  /// #F4F4F7 — fundo das telas
+  static const Color gelo = Color(0xFFF4F4F7);
+
+  /// #E4E4EA — bordas de cartões
+  static const Color geloBorda = Color(0xFFE4E4EA);
+
+  // Menu lateral (fundo escuro)
+
+  /// #1C1D22
+  static const Color noite = Color(0xFF1C1D22);
+
+  /// #26272E
+  static const Color noiteSuperficie = Color(0xFF26272E);
+
+  /// #2D2E36
+  static const Color noiteBorda = Color(0xFF2D2E36);
+
+  /// #C9C9D3
+  static const Color noiteTexto = Color(0xFFC9C9D3);
+
+  /// #A5A5B2
+  static const Color noiteTextoSuave = Color(0xFFA5A5B2);
+
+  /// #8E8E9C
+  static const Color noiteRotulo = Color(0xFF8E8E9C);
+
+  // Faixa de destaque (púrpura escuro)
+
+  /// #3A3256
+  static const Color purpuraNoiteMedia = Color(0xFF3A3256);
+
+  /// #463B6A
+  static const Color purpuraNoiteFaixa = Color(0xFF463B6A);
+
+  /// #54487E
+  static const Color purpuraNoiteClara = Color(0xFF54487E);
+
+  /// #C9BEF0
+  static const Color lavandaClara = Color(0xFFC9BEF0);
+
+  /// #E2DCF3
+  static const Color lavandaTexto = Color(0xFFE2DCF3);
 }

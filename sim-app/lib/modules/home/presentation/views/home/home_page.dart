@@ -14,34 +14,43 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends ViewState<HomePage, HomeViewModel> {
   @override
   Widget build(BuildContext context) {
+    final compacto = context.screenWidth < SimBreakpoints.compacto;
+
     return SimScaffold(
       body: ViewModelBuilder<HomeViewModel, HomeState>(
         viewModel: viewModel,
         builder: (context, state) {
+          final view = state.view;
           return SingleChildScrollView(
-            padding: EdgeInsets.symmetric(
-              horizontal: context.screenWidth < SimBreakpoints.compacto ? Spacing.sm.width : Spacing.lg.width,
-              vertical: Spacing.md.height,
+            padding: EdgeInsets.fromLTRB(
+              compacto ? Spacing.sm.width : Spacing.lg.width,
+              compacto ? Spacing.sm.height : Spacing.md.height + 4,
+              compacto ? Spacing.sm.width : Spacing.lg.width,
+              Spacing.xxl.height,
             ),
             child: Align(
-              alignment: Alignment.topCenter,
+              alignment: Alignment.topLeft,
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1280),
+                constraints: const BoxConstraints(maxWidth: 1240),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    HomeCabecalho(
-                      saudacao: state.saudacao,
+                    HomeDestaque(
                       dataHoje: state.dataHoje,
+                      saudacao: state.saudacao,
+                      fraseResumo: view?.fraseResumo,
+                      capacidade: view?.capacidade,
+                      maquinasEmUso: view?.maquinasEmUso ?? 0,
+                      maquinasEmSobrecarga: view?.maquinasEmSobrecarga ?? 0,
+                      entregasAteAmanha: view?.entregasAteAmanha ?? 0,
                       onNovoOrcamento: () => mostrarFuncionalidadeNaoImplementada(context),
-                      onNovaEncomenda: () => mostrarFuncionalidadeNaoImplementada(context),
+                      onVerProgramacao: () => mostrarFuncionalidadeNaoImplementada(context),
                     ),
                     Spacing.md.vertical,
                     SimCircularLoading(
                       loading: state.isLoading,
                       child: _conteudo(state),
                     ),
-                    Spacing.lg.vertical,
                   ],
                 ),
               ),
@@ -54,27 +63,31 @@ class _HomePageState extends ViewState<HomePage, HomeViewModel> {
 
   Widget _conteudo(HomeState state) {
     final painel = state.painel;
-    if (state.mensagemErro != null || painel == null) {
+    final view = state.view;
+    if (state.mensagemErro != null || painel == null || view == null) {
       return HomeErro(
         mensagem: state.mensagemErro ?? 'Não foi possível carregar o painel.',
         onTentarNovamente: () => viewModel.carregarPainel(),
       );
     }
 
-    final entregas = HomeProximasEntregasCard(
-      entregas: painel.proximasEntregas,
+    final semana = HomeEntregasSemanaCard(
+      periodo: view.periodoSemana,
+      dias: view.dias,
+      visualizacao: state.visualizacao,
+      onVisualizacao: (visualizacao) => viewModel.alterarVisualizacao(visualizacao),
+    );
+    final emAndamento = HomeEmAndamentoCard(
+      entregas: view.emAndamento,
       onVerEncomendas: () => mostrarFuncionalidadeNaoImplementada(context),
     );
-    final lateral = Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        HomeCargaMaquinasCard(
-          cargas: painel.cargaMaquinas,
-          onVerProgramacao: () => mostrarFuncionalidadeNaoImplementada(context),
-        ),
-        Spacing.sm.vertical,
-        HomeAtalhosCard(onAtalho: (_) => mostrarFuncionalidadeNaoImplementada(context)),
-      ],
+    final atencao = HomeAtencaoCard(
+      alertas: painel.alertas,
+      onAcao: (_) => mostrarFuncionalidadeNaoImplementada(context),
+    );
+    final maquinas = HomeMaquinasCard(
+      maquinas: painel.maquinas,
+      onVerProgramacao: () => mostrarFuncionalidadeNaoImplementada(context),
     );
 
     return Column(
@@ -82,27 +95,34 @@ class _HomePageState extends ViewState<HomePage, HomeViewModel> {
       children: [
         HomeIndicadores(
           resumo: painel.resumo,
+          maquinasEmUso: view.maquinasEmUso,
+          entregasNaSemana: view.entregasNaSemana,
+          entregasConcluidasNaSemana: view.entregasConcluidasNaSemana,
           onIndicador: (_) => mostrarFuncionalidadeNaoImplementada(context),
         ),
-        Spacing.sm.vertical,
+        Spacing.md.vertical,
+        semana,
+        Spacing.md.vertical,
         LayoutBuilder(
           builder: (context, constraints) {
             if (constraints.maxWidth < 1000) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [entregas, Spacing.sm.vertical, lateral],
+                children: [emAndamento, Spacing.md.vertical, atencao],
               );
             }
             return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(flex: 3, child: entregas),
-                Spacing.sm.horizontal,
-                Expanded(flex: 2, child: lateral),
+                Expanded(flex: 3, child: emAndamento),
+                Spacing.md.horizontal,
+                Expanded(flex: 2, child: atencao),
               ],
             );
           },
         ),
+        Spacing.md.vertical,
+        maquinas,
       ],
     );
   }

@@ -13,6 +13,12 @@ enum SimButtonStyle {
 
   /// Ação discreta (só texto).
   texto,
+
+  /// Ação principal sobre fundo escuro (branco).
+  claro,
+
+  /// Ação secundária sobre fundo escuro (contorno claro).
+  contornoClaro,
 }
 
 /// Botão padrão do SIM.
@@ -76,6 +82,26 @@ class SimButton extends StatelessWidget {
         onPressed: onTap,
         style: OutlinedButton.styleFrom(
           backgroundColor: SimTokens.colorWhite,
+          padding: padding,
+          textStyle: SimTypography.bodySmSemiBold,
+        ),
+        child: child,
+      ),
+      SimButtonStyle.claro => FilledButton(
+        onPressed: onTap,
+        style: FilledButton.styleFrom(
+          backgroundColor: SimTokens.colorWhite,
+          foregroundColor: SimTokens.colorPrimary900,
+          padding: padding,
+          textStyle: SimTypography.bodySmSemiBold,
+        ),
+        child: child,
+      ),
+      SimButtonStyle.contornoClaro => OutlinedButton(
+        onPressed: onTap,
+        style: OutlinedButton.styleFrom(
+          foregroundColor: SimTokens.colorWhite,
+          side: const BorderSide(color: SimTokens.colorPrimary300),
           padding: padding,
           textStyle: SimTypography.bodySmSemiBold,
         ),

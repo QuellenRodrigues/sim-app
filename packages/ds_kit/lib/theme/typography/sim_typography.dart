@@ -5,7 +5,7 @@ import '../tokens/tokens.dart';
 
 /// Estilos de texto do SIM.
 ///
-/// - **Jost** (display/títulos): geométrica, mesma família do wordmark "sim".
+/// - **Jost** (display/títulos): geométrica, mesma família do wordmark "SIM".
 /// - **Inter** (interface/dados): legível em telas densas.
 class SimTypography {
   SimTypography._();
@@ -16,6 +16,28 @@ class SimTypography {
 
   /// Algarismos de mesma largura, para colunas de valores e quantidades.
   static const List<FontFeature> tabular = [FontFeature.tabularFigures()];
+
+  static final TextStyle displayXlLight = TextStyle(
+    fontFamily: fontFamilyDisplay,
+    package: package,
+    fontWeight: FontWeight.w300,
+    fontSize: 46.fontSize,
+    height: 1.05,
+    letterSpacing: -0.4,
+    color: SimTokens.colorNeutral800,
+  );
+
+  /// Números grandes de indicadores.
+  static final TextStyle numeroLg = TextStyle(
+    fontFamily: fontFamilyDisplay,
+    package: package,
+    fontWeight: FontWeight.w500,
+    fontSize: 38.fontSize,
+    height: 1,
+    letterSpacing: 0,
+    color: SimTokens.colorNeutral800,
+    fontFeatures: tabular,
+  );
 
   static final TextStyle displayLgLight = TextStyle(
     fontFamily: fontFamilyDisplay,
@@ -128,6 +150,17 @@ class SimTypography {
     color: SimTokens.colorNeutral600,
   );
 
+  /// Rótulo em caixa alta sobre fundos escuros (data no destaque, seções do menu).
+  static final TextStyle overlineSemiBold = TextStyle(
+    fontFamily: fontFamily,
+    package: package,
+    fontWeight: FontWeight.w600,
+    fontSize: 12.fontSize,
+    height: 16 / 12,
+    letterSpacing: 1.1,
+    color: SimTokens.colorNeutral500,
+  );
+
   static final TextStyle labelSmMedium = TextStyle(
     fontFamily: fontFamily,
     package: package,
@@ -149,14 +182,14 @@ class SimTypography {
     color: SimTokens.colorNeutral500,
   );
 
-  /// Wordmark "sim" — use apenas via [SimLogo].
+  /// Wordmark "SIM" — use apenas via [SimLogo].
   static TextStyle wordmark(double size, Color color) => TextStyle(
     fontFamily: fontFamilyDisplay,
     package: package,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w300,
     fontSize: size,
     height: 1,
-    letterSpacing: -0.03 * size,
+    letterSpacing: 0.02 * size,
     color: color,
   );
 

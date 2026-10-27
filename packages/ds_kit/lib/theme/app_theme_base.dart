@@ -50,7 +50,7 @@ class AppThemeBase {
       colorScheme: colorScheme,
       fontFamily: 'packages/${SimTypography.package}/${SimTypography.fontFamily}',
       textTheme: SimTypography.textTheme,
-      scaffoldBackgroundColor: SimTokens.colorNeutral50,
+      scaffoldBackgroundColor: SimTokens.colorBackground,
       dividerTheme: const DividerThemeData(color: SimTokens.colorNeutral200, thickness: 1, space: 1),
       iconTheme: const IconThemeData(color: SimTokens.colorNeutral600, size: 22),
       appBarTheme: AppBarTheme(
