@@ -56,10 +56,11 @@ enum MenuRoutesEnum {
   ),
   cadastros(
     name: 'Cadastros',
-    route: '/menu/cadastros/',
+    route: '/menu/cadastros/clientes/',
     icon: Icons.groups_outlined,
     selectedIcon: Icons.groups,
     secao: 'Gestão',
+    disponivel: true,
   ),
   relatorios(
     name: 'Relatórios',

@@ -1,6 +1,7 @@
 import 'package:core/core.dart';
 import 'package:flutter/widgets.dart';
 
+import '../clientes/clientes.dart';
 import '../home/home.dart';
 import 'menu.dart';
 
@@ -20,6 +21,11 @@ class MenuModule extends Module {
         ModuleRoute(
           '/inicio/',
           module: HomeModule(),
+          transition: TransitionType.fadeIn,
+        ),
+        ModuleRoute(
+          '/cadastros/clientes/',
+          module: ClientesModule(),
           transition: TransitionType.fadeIn,
         ),
       ],

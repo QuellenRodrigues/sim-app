@@ -19,6 +19,9 @@ enum SimButtonStyle {
 
   /// Ação secundária sobre fundo escuro (contorno claro).
   contornoClaro,
+
+  /// Ação destrutiva (excluir), com contorno vermelho.
+  perigo,
 }
 
 /// Botão padrão do SIM.
@@ -102,6 +105,17 @@ class SimButton extends StatelessWidget {
         style: OutlinedButton.styleFrom(
           foregroundColor: SimTokens.colorWhite,
           side: const BorderSide(color: SimTokens.colorPrimary300),
+          padding: padding,
+          textStyle: SimTypography.bodySmSemiBold,
+        ),
+        child: child,
+      ),
+      SimButtonStyle.perigo => OutlinedButton(
+        onPressed: onTap,
+        style: OutlinedButton.styleFrom(
+          backgroundColor: SimTokens.colorWhite,
+          foregroundColor: SimTokens.colorError700,
+          side: const BorderSide(color: SimTokens.colorErrorBorder),
           padding: padding,
           textStyle: SimTypography.bodySmSemiBold,
         ),

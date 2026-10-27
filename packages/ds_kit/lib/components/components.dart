@@ -2,6 +2,7 @@ export 'sim_avatar/avatar.dart';
 export 'sim_card/card.dart';
 export 'sim_charts/charts.dart';
 export 'sim_circular_loading/circular_loading.dart';
+export 'sim_dialog/dialog.dart';
 export 'sim_logo/logo.dart';
 export 'sim_scaffold/scaffold.dart';
 export 'sim_segmented_control/segmented_control.dart';
