@@ -9,10 +9,19 @@ import 'clientes_datasource.dart';
 class ClientesDatasourceMock implements ClientesDatasource {
   static final List<ClienteModel> _clientes = [..._iniciais];
 
+  /// Códigos excluídos. Como no SIM antigo (coluna EXCLUIDO), o cliente só é marcado,
+  /// para não perder o histórico de orçamentos e encomendas.
+  static final Set<int> _excluidos = {};
+
   /// Volta aos dados de exemplo (usado nos testes).
-  static void reiniciar() => _clientes
-    ..clear()
-    ..addAll(_iniciais);
+  static void reiniciar() {
+    _clientes
+      ..clear()
+      ..addAll(_iniciais);
+    _excluidos.clear();
+  }
+
+  static Iterable<ClienteModel> get _ativos => _clientes.where((c) => !_excluidos.contains(c.codigo));
 
   static const _atraso = Duration(milliseconds: 250);
 
@@ -22,7 +31,7 @@ class ClientesDatasourceMock implements ClientesDatasource {
     final termo = busca.trim().normalizado;
     final digitos = busca.somenteDigitos;
 
-    final resultado = _clientes.where((c) {
+    final resultado = _ativos.where((c) {
       if (termo.isEmpty) return true;
       return c.razaoSocial.normalizado.contains(termo) ||
           c.nomeFantasia.normalizado.contains(termo) ||
@@ -39,7 +48,7 @@ class ClientesDatasourceMock implements ClientesDatasource {
 
     final cnpj = cliente.cnpj.somenteDigitos;
     if (cnpj.isNotEmpty) {
-      final duplicado = _clientes.where((c) => c.codigo != cliente.codigo && c.cnpj.somenteDigitos == cnpj);
+      final duplicado = _ativos.where((c) => c.codigo != cliente.codigo && c.cnpj.somenteDigitos == cnpj);
       if (duplicado.isNotEmpty) {
         throw DomainException(message: 'Já existe um cliente com este CNPJ: ${duplicado.first.razaoSocial}.');
       }
@@ -53,7 +62,9 @@ class ClientesDatasourceMock implements ClientesDatasource {
     }
 
     final indice = _clientes.indexWhere((c) => c.codigo == cliente.codigo);
-    if (indice < 0) throw DomainException(message: 'Cliente não encontrado.');
+    if (indice < 0 || _excluidos.contains(cliente.codigo)) {
+      throw DomainException(message: 'Cliente não encontrado.');
+    }
     _clientes[indice] = cliente;
     return cliente;
   }
@@ -61,7 +72,7 @@ class ClientesDatasourceMock implements ClientesDatasource {
   @override
   Future<void> excluir(int codigo) async {
     await Future<void>.delayed(_atraso);
-    _clientes.removeWhere((c) => c.codigo == codigo);
+    _excluidos.add(codigo);
   }
 
   static const _iniciais = [
@@ -70,6 +81,7 @@ class ClientesDatasourceMock implements ClientesDatasource {
       razaoSocial: 'Metalúrgica Vale Verde Ltda.',
       nomeFantasia: 'Vale Verde',
       cnpj: '11.222.333/0001-81',
+      inscricaoEstadual: '78.123.456',
       endereco: 'Rua das Indústrias, 450',
       bairro: 'Distrito Industrial',
       cidade: 'Volta Redonda',
@@ -93,7 +105,10 @@ class ClientesDatasourceMock implements ClientesDatasource {
       contato: 'Patrícia Lemos',
       telefone1: '(24) 3348-2020',
       email: 'pcp@rioclaro.com.br',
+      email2: 'fiscal@rioclaro.com.br',
       fax: '(24) 3348-2021',
+      icms: TributacaoImposto.incluso,
+      destinacaoIcms: DestinacaoIcms.industrializacao,
     ),
     ClienteModel(
       codigo: 3,
@@ -180,6 +195,9 @@ class ClientesDatasourceMock implements ClientesDatasource {
       contato: 'Eduardo Faria',
       telefone1: '(12) 3632-1414',
       email: 'eduardo@autotaubate.com.br',
+      inscricaoMunicipal: '45.210-7',
+      iss: TributacaoImposto.aParte,
+      aliquotaIss: 0.05,
     ),
   ];
 }

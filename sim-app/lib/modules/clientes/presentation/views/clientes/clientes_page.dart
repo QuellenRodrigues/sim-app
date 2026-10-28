@@ -1,7 +1,6 @@
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../../util/util.dart';
 import '../../../clientes.dart';
 
 class ClientesPage extends StatefulWidget {
@@ -19,7 +18,8 @@ class _ClientesPageState extends ViewState<ClientesPage, ClientesViewModel> {
       context,
       titulo: 'Excluir cliente?',
       mensagem:
-          'O cliente "${state.selecionado?.razaoSocial}" será removido do cadastro. Esta ação não pode ser desfeita.',
+          'O cliente "${state.selecionado?.razaoSocial}" sai da lista de clientes. '
+          'Os orçamentos e encomendas dele continuam guardados.',
       textoConfirmar: 'Excluir',
       destrutivo: true,
     );
@@ -118,7 +118,6 @@ class _ClientesPageState extends ViewState<ClientesPage, ClientesViewModel> {
       },
       onCancelar: () => viewModel.fechar(),
       onExcluir: () => _excluir(state),
-      onTaxas: () => mostrarFuncionalidadeNaoImplementada(context),
     );
   }
 }

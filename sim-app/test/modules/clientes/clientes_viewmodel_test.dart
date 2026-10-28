@@ -115,5 +115,74 @@ void main() {
       expect(viewModel.state.clientes.any((c) => c.codigo == 5), isFalse);
       viewModel.dispose();
     });
+
+    test('excluído não bloqueia o CNPJ e não recebe o código de volta', () async {
+      final viewModel = _viewModel();
+      await _aguardarDatasource();
+
+      viewModel.selecionar(viewModel.state.clientes.firstWhere((c) => c.codigo == 8));
+      await viewModel.excluir();
+      viewModel.novo();
+      viewModel.razaoSocialController.text = 'Automação Taubaté Ltda.';
+      viewModel.cnpjController.text = '19.283.746/0001-88';
+      await viewModel.salvar();
+
+      expect(viewModel.state.aviso?.sucesso, isTrue);
+      expect(viewModel.state.selecionado?.codigo, 9);
+      viewModel.dispose();
+    });
+
+    test('cliente novo começa com os impostos padrão do SIM', () async {
+      final viewModel = _viewModel();
+      await _aguardarDatasource();
+
+      viewModel.selecionar(viewModel.state.clientes.firstWhere((c) => c.codigo == 2));
+      viewModel.novo();
+
+      expect(viewModel.state.icms, TributacaoImposto.aParte);
+      expect(viewModel.state.destinacaoIcms, DestinacaoIcms.usoConsumo);
+      expect(viewModel.state.ipi, TributacaoImposto.aParte);
+      expect(viewModel.state.iss, TributacaoImposto.incluso);
+      expect(viewModel.aliquotaIssController.text, isEmpty);
+      viewModel.dispose();
+    });
+
+    test('salva inscrições, e-mails extras e impostos', () async {
+      final viewModel = _viewModel();
+      await _aguardarDatasource();
+
+      viewModel.selecionar(viewModel.state.clientes.firstWhere((c) => c.codigo == 8));
+      expect(viewModel.aliquotaIssController.text, '5');
+
+      viewModel.inscricaoEstadualController.text = '123.456.789.110';
+      viewModel.email3Controller.text = 'nf@autotaubate.com.br';
+      viewModel.alterarIcms(TributacaoImposto.naoIncidente);
+      viewModel.alterarDestinacaoIcms(DestinacaoIcms.industrializacao);
+      viewModel.alterarIpi(TributacaoImposto.incluso);
+      viewModel.aliquotaIssController.text = '2,5';
+      await viewModel.salvar();
+
+      final salvo = viewModel.state.clientes.firstWhere((c) => c.codigo == 8);
+      expect(salvo.inscricaoEstadual, '123.456.789.110');
+      expect(salvo.inscricaoMunicipal, '45.210-7');
+      expect(salvo.email3, 'nf@autotaubate.com.br');
+      expect(salvo.icms, TributacaoImposto.naoIncidente);
+      expect(salvo.destinacaoIcms, DestinacaoIcms.industrializacao);
+      expect(salvo.ipi, TributacaoImposto.incluso);
+      expect(salvo.iss, TributacaoImposto.aParte);
+      expect(salvo.aliquotaIss, closeTo(0.025, 1e-9));
+      expect(viewModel.aliquotaIssController.text, '2,5');
+      viewModel.dispose();
+    });
+  });
+
+  group('AliquotaIcms', () {
+    test('usa a tabela de ICMS por estado do SIM antigo', () {
+      expect(AliquotaIcms.de(UnidadeFederativa.rj), 0.19);
+      expect(AliquotaIcms.de(UnidadeFederativa.es), 0.07);
+      expect(AliquotaIcms.de(UnidadeFederativa.sp), 0.12);
+      expect(AliquotaIcms.de(UnidadeFederativa.to), isNull);
+      expect(AliquotaIcms.de(null), isNull);
+    });
   });
 }

@@ -27,6 +27,10 @@ class ClientesState extends ViewModelState {
     this.modo = ClientesModo.nenhum,
     this.selecionado,
     this.estado,
+    this.icms = TributacaoImposto.aParte,
+    this.destinacaoIcms = DestinacaoIcms.usoConsumo,
+    this.ipi = TributacaoImposto.aParte,
+    this.iss = TributacaoImposto.incluso,
     this.salvando = false,
     this.aviso,
   });
@@ -42,6 +46,12 @@ class ClientesState extends ViewModelState {
 
   /// Estado (UF) escolhido no formulário.
   final UnidadeFederativa? estado;
+
+  /// Impostos escolhidos no formulário.
+  final TributacaoImposto icms;
+  final DestinacaoIcms destinacaoIcms;
+  final TributacaoImposto ipi;
+  final TributacaoImposto iss;
   final bool salvando;
   final ClientesAviso? aviso;
 
@@ -56,6 +66,10 @@ class ClientesState extends ViewModelState {
     bool limparSelecionado = false,
     UnidadeFederativa? estado,
     bool limparEstado = false,
+    TributacaoImposto? icms,
+    DestinacaoIcms? destinacaoIcms,
+    TributacaoImposto? ipi,
+    TributacaoImposto? iss,
     bool? salvando,
     ClientesAviso? aviso,
   }) {
@@ -67,6 +81,10 @@ class ClientesState extends ViewModelState {
       modo: modo ?? this.modo,
       selecionado: limparSelecionado ? null : selecionado ?? this.selecionado,
       estado: limparEstado ? null : estado ?? this.estado,
+      icms: icms ?? this.icms,
+      destinacaoIcms: destinacaoIcms ?? this.destinacaoIcms,
+      ipi: ipi ?? this.ipi,
+      iss: iss ?? this.iss,
       salvando: salvando ?? this.salvando,
       aviso: aviso ?? this.aviso,
     );

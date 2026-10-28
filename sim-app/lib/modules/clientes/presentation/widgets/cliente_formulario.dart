@@ -1,11 +1,13 @@
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
+import '../../domain/domain.dart';
 import '../views/clientes/clientes_state.dart';
 import '../views/clientes/clientes_viewmodel.dart';
 
 /// Formulário do cliente, com os grupos do sistema antigo:
-/// dados da empresa, endereço, contato e outros contatos.
+/// dados da empresa, endereço, contato, outros contatos e impostos.
 class ClienteFormulario extends StatelessWidget {
   const ClienteFormulario({
     required this.formKey,
@@ -14,7 +16,6 @@ class ClienteFormulario extends StatelessWidget {
     required this.onSalvar,
     required this.onCancelar,
     required this.onExcluir,
-    required this.onTaxas,
     required this.onEstado,
     super.key,
     this.onVoltar,
@@ -26,7 +27,6 @@ class ClienteFormulario extends StatelessWidget {
   final VoidCallback onSalvar;
   final VoidCallback onCancelar;
   final VoidCallback onExcluir;
-  final VoidCallback onTaxas;
   final ValueChanged<UnidadeFederativa?> onEstado;
 
   /// Exibe a seta de voltar (layout de celular).
@@ -128,6 +128,24 @@ class ClienteFormulario extends StatelessWidget {
                             2,
                           ),
                         ],
+                        [
+                          (
+                            SimTextField(
+                              label: 'Inscrição estadual',
+                              controller: viewModel.inscricaoEstadualController,
+                              maxLength: 20,
+                            ),
+                            1,
+                          ),
+                          (
+                            SimTextField(
+                              label: 'Inscrição municipal',
+                              controller: viewModel.inscricaoMunicipalController,
+                              maxLength: 20,
+                            ),
+                            1,
+                          ),
+                        ],
                       ],
                     ),
                     const _Separador(),
@@ -210,11 +228,15 @@ class ClienteFormulario extends StatelessWidget {
                               hint: 'nome@empresa.com.br',
                               controller: viewModel.emailController,
                               keyboardType: TextInputType.emailAddress,
-                              maxLength: 255,
+                              maxLength: 50,
                               validator: SimValidatorless.email(),
                             ),
                             1,
                           ),
+                        ],
+                        [
+                          (_Email(label: 'E-mail 2', controller: viewModel.email2Controller), 1),
+                          (_Email(label: 'E-mail 3', controller: viewModel.email3Controller), 1),
                         ],
                         [
                           (_Telefone(label: 'Telefone 1', controller: viewModel.telefone1Controller), 1),
@@ -242,6 +264,71 @@ class ClienteFormulario extends StatelessWidget {
                         ],
                       ],
                     ),
+                    const _Separador(),
+                    _Secao(
+                      titulo: 'Impostos',
+                      descricao: 'Padrão usado nos orçamentos deste cliente.',
+                      icone: Icons.receipt_long_outlined,
+                      linhas: [
+                        [
+                          (
+                            _Tributacao(
+                              label: 'ICMS',
+                              valor: state.icms,
+                              onChanged: viewModel.alterarIcms,
+                            ),
+                            1,
+                          ),
+                          (
+                            SimDropdownField<DestinacaoIcms>(
+                              label: 'Destinação',
+                              valor: state.destinacaoIcms,
+                              itens: {for (final d in DestinacaoIcms.values) d: d.descricao},
+                              onChanged: (destinacao) => viewModel.alterarDestinacaoIcms(destinacao!),
+                            ),
+                            1,
+                          ),
+                          (
+                            _Informacao(
+                              label: 'Alíquota do ICMS',
+                              valor: _aliquotaIcms(state.estado),
+                            ),
+                            1,
+                          ),
+                        ],
+                        [
+                          (
+                            _Tributacao(
+                              label: 'ISS',
+                              valor: state.iss,
+                              onChanged: viewModel.alterarIss,
+                            ),
+                            1,
+                          ),
+                          (
+                            SimTextField(
+                              label: 'Alíquota do ISS (%)',
+                              hint: '0',
+                              controller: viewModel.aliquotaIssController,
+                              enabled: state.iss != TributacaoImposto.naoIncidente,
+                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9,]'))],
+                              maxLength: 6,
+                              validator: _validarPorcentagem,
+                            ),
+                            1,
+                          ),
+                          (
+                            _Tributacao(
+                              label: 'IPI',
+                              valor: state.ipi,
+                              onChanged: viewModel.alterarIpi,
+                            ),
+                            1,
+                          ),
+                        ],
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -261,7 +348,7 @@ class ClienteFormulario extends StatelessWidget {
                     spacing: Spacing.xs.width,
                     runSpacing: Spacing.xs.height,
                     children: [
-                      if (edicao) ...[
+                      if (edicao)
                         SimButton(
                           label: 'Excluir',
                           icon: Icons.delete_outline,
@@ -269,14 +356,6 @@ class ClienteFormulario extends StatelessWidget {
                           height: 44,
                           onPressed: onExcluir,
                         ),
-                        SimButton(
-                          label: 'Taxas e impostos',
-                          icon: Icons.percent,
-                          style: SimButtonStyle.secundario,
-                          height: 44,
-                          onPressed: onTaxas,
-                        ),
-                      ],
                     ],
                   ),
                   Wrap(
@@ -304,6 +383,93 @@ class ClienteFormulario extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  /// "19% (RJ)", ou uma orientação quando não há estado ou alíquota.
+  static String _aliquotaIcms(UnidadeFederativa? estado) {
+    if (estado == null) return 'Escolha o estado';
+    final aliquota = AliquotaIcms.de(estado);
+    if (aliquota == null) return 'Sem alíquota para ${estado.sigla}';
+    return '${NumberFormatter.percentual(aliquota)} (${estado.sigla})';
+  }
+
+  static String? _validarPorcentagem(String? valor) {
+    final texto = valor?.trim() ?? '';
+    if (texto.isEmpty) return null;
+    final numero = double.tryParse(texto.replaceAll(',', '.'));
+    if (numero == null || numero > 100) return 'Informe uma porcentagem de 0 a 100';
+    return null;
+  }
+}
+
+class _Tributacao extends StatelessWidget {
+  const _Tributacao({required this.label, required this.valor, required this.onChanged});
+
+  final String label;
+  final TributacaoImposto valor;
+  final ValueChanged<TributacaoImposto> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return SimDropdownField<TributacaoImposto>(
+      label: label,
+      valor: valor,
+      itens: {for (final t in TributacaoImposto.values) t: t.descricao},
+      onChanged: (tributacao) => onChanged(tributacao!),
+    );
+  }
+}
+
+/// Valor calculado pelo sistema, exibido no lugar de um campo.
+class _Informacao extends StatelessWidget {
+  const _Informacao({required this.label, required this.valor});
+
+  final String label;
+  final String valor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SimFieldLabel(label),
+        Container(
+          height: 44,
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          decoration: BoxDecoration(
+            color: SimTokens.colorNeutral50,
+            borderRadius: BorderRadius.circular(SimTokens.roundedSm),
+            border: Border.all(color: SimTokens.colorBorder),
+          ),
+          child: Text(
+            valor,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: SimTypography.bodySmRegular.copyWith(color: SimTokens.colorNeutral700),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Email extends StatelessWidget {
+  const _Email({required this.label, required this.controller});
+
+  final String label;
+  final TextEditingController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return SimTextField(
+      label: label,
+      hint: 'nome@empresa.com.br',
+      controller: controller,
+      keyboardType: TextInputType.emailAddress,
+      maxLength: 50,
+      validator: SimValidatorless.email(),
     );
   }
 }
@@ -341,10 +507,11 @@ class _Separador extends StatelessWidget {
 
 /// Grupo de campos com título; cada linha vira coluna em telas estreitas.
 class _Secao extends StatelessWidget {
-  const _Secao({required this.titulo, required this.icone, required this.linhas});
+  const _Secao({required this.titulo, required this.icone, required this.linhas, this.descricao});
 
   final String titulo;
   final IconData icone;
+  final String? descricao;
 
   /// Linhas de campos; cada campo traz o seu `flex` na linha.
   final List<List<(Widget, int)>> linhas;
@@ -369,6 +536,17 @@ class _Secao extends StatelessWidget {
             ),
             const SizedBox(width: 10),
             Text(titulo, style: SimTypography.titleSmSemiBold),
+            if (descricao != null) ...[
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  descricao!,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: SimTypography.bodySmRegular.copyWith(color: SimTokens.colorNeutral500),
+                ),
+              ),
+            ],
           ],
         ),
         Spacing.sm.vertical,
