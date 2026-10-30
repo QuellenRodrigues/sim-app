@@ -56,6 +56,8 @@ class SimTextField extends StatelessWidget {
     this.maxLength,
     this.enabled = true,
     this.onChanged,
+    this.onSubmitted,
+    this.autofocus = false,
     this.prefixIcon,
   });
 
@@ -70,6 +72,10 @@ class SimTextField extends StatelessWidget {
   final int? maxLength;
   final bool enabled;
   final ValueChanged<String>? onChanged;
+
+  /// Chamado ao apertar Enter no campo.
+  final ValueChanged<String>? onSubmitted;
+  final bool autofocus;
   final IconData? prefixIcon;
 
   @override
@@ -90,6 +96,8 @@ class SimTextField extends StatelessWidget {
           textInputAction: textInputAction,
           enabled: enabled,
           onChanged: onChanged,
+          onFieldSubmitted: onSubmitted,
+          autofocus: autofocus,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           style: SimTypography.bodySmRegular,
           decoration: InputDecoration(

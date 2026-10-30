@@ -16,7 +16,8 @@ class MenuViewModel extends ViewModel<MenuState> {
   bool selecionar(int index) {
     final destino = MenuRoutesEnum.values[index];
     if (!destino.disponivel) return false;
-    if (index == state.currentIndex) return true;
+    // Dentro de uma subtela (ex.: Cadastros › Clientes), o item volta para a página inicial dele.
+    if (index == state.currentIndex && Nav.path == destino.route) return true;
 
     emit(state.copyWith(currentIndex: index));
     Nav.navigate(destino.route);

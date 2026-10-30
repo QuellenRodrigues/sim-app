@@ -56,9 +56,9 @@ enum MenuRoutesEnum {
   ),
   cadastros(
     name: 'Cadastros',
-    route: '/menu/cadastros/clientes/',
-    icon: Icons.groups_outlined,
-    selectedIcon: Icons.groups,
+    route: '/menu/cadastros/',
+    icon: Icons.folder_shared_outlined,
+    selectedIcon: Icons.folder_shared,
     secao: 'Gestão',
     disponivel: true,
   ),
