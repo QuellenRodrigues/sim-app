@@ -16,6 +16,14 @@ enum CadastrosEnum {
     descricao: 'Fornecedores de material e serviço, e o que cada um fornece.',
     icone: Icons.local_shipping_outlined,
     grupo: 'Comercial',
+    rota: '/menu/cadastros/fornecedores/',
+  ),
+  precos(
+    nome: 'Consulta de preços',
+    descricao: 'Procure um material e compare os preços de quem fornece.',
+    icone: Icons.price_check,
+    grupo: 'Comercial',
+    rota: '/menu/cadastros/fornecedores/precos/',
   ),
   maquinas(
     nome: 'Máquinas e operações',

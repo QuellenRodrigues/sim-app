@@ -56,7 +56,7 @@ class ClientesLista extends StatelessWidget {
 
   Widget _conteudo() {
     if (erro != null) {
-      return _Mensagem(
+      return SimMensagem(
         icone: Icons.cloud_off_outlined,
         texto: erro!,
         acao: SimButton(
@@ -69,7 +69,7 @@ class ClientesLista extends StatelessWidget {
     if (clientes.isEmpty) {
       return isLoading
           ? const Center(child: SimCircularLoading())
-          : const _Mensagem(icone: Icons.search_off, texto: 'Nenhum cliente encontrado.');
+          : const SimMensagem(icone: Icons.search_off, texto: 'Nenhum cliente encontrado.');
     }
 
     return ListView.separated(
@@ -150,36 +150,6 @@ class _ItemCliente extends StatelessWidget {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _Mensagem extends StatelessWidget {
-  const _Mensagem({required this.icone, required this.texto, this.acao});
-
-  final IconData icone;
-  final String texto;
-  final Widget? acao;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(Spacing.md.width),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icone, size: 32, color: SimTokens.colorNeutral400),
-            Spacing.xs.vertical,
-            Text(
-              texto,
-              textAlign: TextAlign.center,
-              style: SimTypography.bodySmRegular.copyWith(color: SimTokens.colorNeutral600),
-            ),
-            if (acao != null) ...[Spacing.sm.vertical, acao!],
-          ],
         ),
       ),
     );

@@ -76,6 +76,14 @@ class AppThemeBase {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(shape: controlShape, textStyle: SimTypography.bodySmSemiBold),
       ),
+      switchTheme: SwitchThemeData(
+        thumbColor: const WidgetStatePropertyAll(SimTokens.colorWhite),
+        trackColor: WidgetStateProperty.resolveWith(
+          (states) =>
+              states.contains(WidgetState.selected) ? SimTokens.colorPrimary500 : SimTokens.colorNeutral300,
+        ),
+        trackOutlineColor: const WidgetStatePropertyAll(SimTokens.transparent),
+      ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: SimTokens.colorWhite,

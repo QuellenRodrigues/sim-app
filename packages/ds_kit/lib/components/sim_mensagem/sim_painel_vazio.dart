@@ -1,11 +1,24 @@
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
-/// Painel direito quando nenhum cliente está aberto.
-class ClientesVazio extends StatelessWidget {
-  const ClientesVazio({required this.onNovo, super.key});
+/// Painel de detalhe quando nenhum registro está aberto.
+class SimPainelVazio extends StatelessWidget {
+  const SimPainelVazio({
+    required this.icone,
+    required this.titulo,
+    required this.texto,
+    required this.acaoLabel,
+    required this.acaoIcone,
+    required this.onAcao,
+    super.key,
+  });
 
-  final VoidCallback onNovo;
+  final IconData icone;
+  final String titulo;
+  final String texto;
+  final String acaoLabel;
+  final IconData acaoIcone;
+  final VoidCallback onAcao;
 
   @override
   Widget build(BuildContext context) {
@@ -24,26 +37,21 @@ class ClientesVazio extends StatelessWidget {
             width: 72,
             height: 72,
             decoration: const BoxDecoration(color: SimTokens.colorPrimary50, shape: BoxShape.circle),
-            child: const Icon(Icons.groups_outlined, size: 34, color: SimTokens.colorPrimary500),
+            child: Icon(icone, size: 34, color: SimTokens.colorPrimary500),
           ),
           Spacing.sm.vertical,
-          Text('Selecione um cliente', style: SimTypography.titleLgMedium),
+          Text(titulo, style: SimTypography.titleLgMedium),
           Spacing.xxs.vertical,
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 360),
             child: Text(
-              'Escolha um cliente na lista para ver e editar os dados, ou cadastre um novo.',
+              texto,
               textAlign: TextAlign.center,
               style: SimTypography.bodySmRegular.copyWith(color: SimTokens.colorNeutral500),
             ),
           ),
           Spacing.md.vertical,
-          SimButton(
-            label: 'Novo cliente',
-            icon: Icons.person_add_alt_1_outlined,
-            height: 44,
-            onPressed: onNovo,
-          ),
+          SimButton(label: acaoLabel, icon: acaoIcone, height: 44, onPressed: onAcao),
         ],
       ),
     );

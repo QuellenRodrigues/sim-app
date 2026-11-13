@@ -91,7 +91,7 @@ class ClienteFormulario extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _Secao(
+                    SimSecaoFormulario(
                       titulo: 'Dados da empresa',
                       icone: Icons.business_outlined,
                       linhas: [
@@ -148,8 +148,8 @@ class ClienteFormulario extends StatelessWidget {
                         ],
                       ],
                     ),
-                    const _Separador(),
-                    _Secao(
+                    const SimSeparadorFormulario(),
+                    SimSecaoFormulario(
                       titulo: 'Endereço',
                       icone: Icons.location_on_outlined,
                       linhas: [
@@ -207,8 +207,8 @@ class ClienteFormulario extends StatelessWidget {
                         ],
                       ],
                     ),
-                    const _Separador(),
-                    _Secao(
+                    const SimSeparadorFormulario(),
+                    SimSecaoFormulario(
                       titulo: 'Contato',
                       icone: Icons.contact_phone_outlined,
                       linhas: [
@@ -235,24 +235,33 @@ class ClienteFormulario extends StatelessWidget {
                           ),
                         ],
                         [
-                          (_Email(label: 'E-mail 2', controller: viewModel.email2Controller), 1),
-                          (_Email(label: 'E-mail 3', controller: viewModel.email3Controller), 1),
+                          (SimEmailField(label: 'E-mail 2', controller: viewModel.email2Controller), 1),
+                          (SimEmailField(label: 'E-mail 3', controller: viewModel.email3Controller), 1),
                         ],
                         [
-                          (_Telefone(label: 'Telefone 1', controller: viewModel.telefone1Controller), 1),
-                          (_Telefone(label: 'Telefone 2', controller: viewModel.telefone2Controller), 1),
-                          (_Telefone(label: 'Telefone 3', controller: viewModel.telefone3Controller), 1),
+                          (
+                            SimTelefoneField(label: 'Telefone 1', controller: viewModel.telefone1Controller),
+                            1,
+                          ),
+                          (
+                            SimTelefoneField(label: 'Telefone 2', controller: viewModel.telefone2Controller),
+                            1,
+                          ),
+                          (
+                            SimTelefoneField(label: 'Telefone 3', controller: viewModel.telefone3Controller),
+                            1,
+                          ),
                         ],
                       ],
                     ),
-                    const _Separador(),
-                    _Secao(
+                    const SimSeparadorFormulario(),
+                    SimSecaoFormulario(
                       titulo: 'Outros contatos',
                       icone: Icons.phone_in_talk_outlined,
                       linhas: [
                         [
-                          (_Telefone(label: 'Fax', controller: viewModel.faxController), 1),
-                          (_Telefone(label: 'Nextel', controller: viewModel.nextelController), 1),
+                          (SimTelefoneField(label: 'Fax', controller: viewModel.faxController), 1),
+                          (SimTelefoneField(label: 'Nextel', controller: viewModel.nextelController), 1),
                           (
                             SimTextField(
                               label: 'Nextel ID',
@@ -264,8 +273,8 @@ class ClienteFormulario extends StatelessWidget {
                         ],
                       ],
                     ),
-                    const _Separador(),
-                    _Secao(
+                    const SimSeparadorFormulario(),
+                    SimSecaoFormulario(
                       titulo: 'Impostos',
                       descricao: 'Padrão usado nos orçamentos deste cliente.',
                       icone: Icons.receipt_long_outlined,
@@ -397,7 +406,7 @@ class ClienteFormulario extends StatelessWidget {
   static String? _validarPorcentagem(String? valor) {
     final texto = valor?.trim() ?? '';
     if (texto.isEmpty) return null;
-    final numero = double.tryParse(texto.replaceAll(',', '.'));
+    final numero = NumberFormatter.lerDecimal(texto);
     if (numero == null || numero > 100) return 'Informe uma porcentagem de 0 a 100';
     return null;
   }
@@ -449,139 +458,6 @@ class _Informacao extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: SimTypography.bodySmRegular.copyWith(color: SimTokens.colorNeutral700),
           ),
-        ),
-      ],
-    );
-  }
-}
-
-class _Email extends StatelessWidget {
-  const _Email({required this.label, required this.controller});
-
-  final String label;
-  final TextEditingController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return SimTextField(
-      label: label,
-      hint: 'nome@empresa.com.br',
-      controller: controller,
-      keyboardType: TextInputType.emailAddress,
-      maxLength: 50,
-      validator: SimValidatorless.email(),
-    );
-  }
-}
-
-class _Telefone extends StatelessWidget {
-  const _Telefone({required this.label, required this.controller});
-
-  final String label;
-  final TextEditingController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return SimTextField(
-      label: label,
-      hint: '(00) 0000-0000',
-      controller: controller,
-      keyboardType: TextInputType.phone,
-      inputFormatters: [MaskInputFormatter.telefone()],
-      validator: SimValidatorless.telefone(),
-    );
-  }
-}
-
-class _Separador extends StatelessWidget {
-  const _Separador();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: Spacing.md.height),
-      child: const Divider(color: SimTokens.colorNeutral100),
-    );
-  }
-}
-
-/// Grupo de campos com título; cada linha vira coluna em telas estreitas.
-class _Secao extends StatelessWidget {
-  const _Secao({required this.titulo, required this.icone, required this.linhas, this.descricao});
-
-  final String titulo;
-  final IconData icone;
-  final String? descricao;
-
-  /// Linhas de campos; cada campo traz o seu `flex` na linha.
-  final List<List<(Widget, int)>> linhas;
-
-  @override
-  Widget build(BuildContext context) {
-    final espaco = Spacing.sm.width;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
-          children: [
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: SimTokens.colorPrimary50,
-                borderRadius: BorderRadius.circular(SimTokens.roundedSm),
-              ),
-              child: Icon(icone, size: 18, color: SimTokens.colorPrimary500),
-            ),
-            const SizedBox(width: 10),
-            Text(titulo, style: SimTypography.titleSmSemiBold),
-            if (descricao != null) ...[
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  descricao!,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: SimTypography.bodySmRegular.copyWith(color: SimTokens.colorNeutral500),
-                ),
-              ),
-            ],
-          ],
-        ),
-        Spacing.sm.vertical,
-        LayoutBuilder(
-          builder: (context, constraints) {
-            final empilhar = constraints.maxWidth < 560;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                for (final (i, linha) in linhas.indexed) ...[
-                  if (i > 0) SizedBox(height: espaco),
-                  if (empilhar)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        for (final (j, (campo, _)) in linha.indexed) ...[
-                          if (j > 0) SizedBox(height: espaco),
-                          campo,
-                        ],
-                      ],
-                    )
-                  else
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        for (final (j, (campo, flex)) in linha.indexed) ...[
-                          if (j > 0) SizedBox(width: espaco),
-                          Expanded(flex: flex, child: campo),
-                        ],
-                      ],
-                    ),
-                ],
-              ],
-            );
-          },
         ),
       ],
     );

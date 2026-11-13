@@ -5,7 +5,8 @@ import 'tabelas_auxiliares_datasource.dart';
 
 /// Tabelas auxiliares mantidas em memória enquanto o SIM não tem API.
 ///
-/// Os valores iniciais são os do banco do SIM de 2014 (sem os registros de teste).
+/// Os valores iniciais são os do banco do SIM de 2014, sem o tipo "TESTE", que nenhum material usa.
+/// O tipo "TESTE 2" aparece como "E.N.D.", nome que recebeu no banco de 2017.
 /// A lista é estática para sobreviver à troca de telas, como um servidor faria.
 class TabelasAuxiliaresDatasourceMock implements TabelasAuxiliaresDatasource {
   static final Map<TabelaAuxiliar, List<ItemTabelaModel>> _itens = _copiaDosIniciais();
@@ -111,6 +112,7 @@ class TabelasAuxiliaresDatasourceMock implements TabelasAuxiliaresDatasource {
       ItemTabelaModel(codigo: 8, descricao: 'CHAPA'),
       ItemTabelaModel(codigo: 9, descricao: 'MAT. COMERCIAL'),
       ItemTabelaModel(codigo: 10, descricao: 'GROSSA'),
+      ItemTabelaModel(codigo: 11, descricao: 'E.N.D.'),
       ItemTabelaModel(codigo: 12, descricao: 'PERFIL IPE'),
       ItemTabelaModel(codigo: 13, descricao: 'T. TERMICO'),
       ItemTabelaModel(codigo: 15, descricao: 'S. TERCEIRO'),

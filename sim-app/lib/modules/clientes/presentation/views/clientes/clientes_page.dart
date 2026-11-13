@@ -69,7 +69,15 @@ class _ClientesPageState extends ViewState<ClientesPage, ClientesViewModel> {
                           Spacing.md.horizontal,
                           Expanded(
                             child: state.modo == ClientesModo.nenhum
-                                ? ClientesVazio(onNovo: () => viewModel.novo())
+                                ? SimPainelVazio(
+                                    icone: Icons.groups_outlined,
+                                    titulo: 'Selecione um cliente',
+                                    texto:
+                                        'Escolha um cliente na lista para ver e editar os dados, ou cadastre um novo.',
+                                    acaoLabel: 'Novo cliente',
+                                    acaoIcone: Icons.person_add_alt_1_outlined,
+                                    onAcao: () => viewModel.novo(),
+                                  )
                                 : _formulario(state),
                           ),
                         ],

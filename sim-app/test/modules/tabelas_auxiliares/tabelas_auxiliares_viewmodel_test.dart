@@ -59,6 +59,16 @@ void main() {
       viewModel.dispose();
     });
 
+    test('mantém os ensaios (E.N.D.) nos tipos de material', () async {
+      final viewModel = _viewModel();
+      viewModel.selecionarTabela(TabelaAuxiliar.tiposMaterial);
+      await _aguardarDatasource();
+
+      expect(viewModel.state.itens, hasLength(21));
+      expect(viewModel.state.itens.map((i) => i.descricao), contains('E.N.D.'));
+      viewModel.dispose();
+    });
+
     test('não aceita descrição repetida na mesma tabela', () async {
       final viewModel = _viewModel();
       await _aguardarDatasource();

@@ -103,7 +103,9 @@ class ClientesViewModel extends ViewModel<ClientesState> {
     faxController.text = cliente.fax;
     nextelController.text = cliente.nextel;
     nextelIdController.text = cliente.nextelId;
-    aliquotaIssController.text = _porcentagem(cliente.aliquotaIss);
+    aliquotaIssController.text = cliente.aliquotaIss == 0
+        ? ''
+        : NumberFormatter.decimal(cliente.aliquotaIss * 100);
 
     emit(
       state.copyWith(
@@ -202,7 +204,7 @@ class ClientesViewModel extends ViewModel<ClientesState> {
       destinacaoIcms: state.destinacaoIcms,
       ipi: state.ipi,
       iss: state.iss,
-      aliquotaIss: (double.tryParse(texto(aliquotaIssController).replaceAll(',', '.')) ?? 0) / 100,
+      aliquotaIss: (NumberFormatter.lerDecimal(texto(aliquotaIssController)) ?? 0) / 100,
     );
   }
 
@@ -223,14 +225,6 @@ class ClientesViewModel extends ViewModel<ClientesState> {
         iss: padrao.iss,
       ),
     );
-  }
-
-  /// 0.05 → "5"; 0.025 → "2,5"; 0 → "".
-  static String _porcentagem(double fracao) {
-    if (fracao == 0) return '';
-    final valor = double.parse((fracao * 100).toStringAsFixed(2));
-    final texto = valor == valor.truncateToDouble() ? valor.toStringAsFixed(0) : valor.toString();
-    return texto.replaceAll('.', ',');
   }
 
   @override

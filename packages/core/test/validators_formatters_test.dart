@@ -48,4 +48,12 @@ void main() {
     expect(UnidadeFederativa.de('Rio de Janeiro'), UnidadeFederativa.rj);
     expect(UnidadeFederativa.de('XX'), isNull);
   });
+
+  test('NumberFormatter escreve e lê números de campos editáveis', () {
+    expect(NumberFormatter.decimal(2.5), '2,5');
+    expect(NumberFormatter.decimal(5), '5');
+    expect(NumberFormatter.decimal(0.07 * 100), '7');
+    expect(NumberFormatter.lerDecimal(' 2,5 '), 2.5);
+    expect(NumberFormatter.lerDecimal('abc'), isNull);
+  });
 }

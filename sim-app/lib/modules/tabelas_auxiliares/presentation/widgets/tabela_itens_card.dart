@@ -86,7 +86,7 @@ class TabelaItensCard extends StatelessWidget {
 
   Widget _conteudo() {
     if (state.erro != null) {
-      return _Mensagem(
+      return SimMensagem(
         icone: Icons.cloud_off_outlined,
         texto: state.erro!,
         acao: SimButton(
@@ -99,7 +99,7 @@ class TabelaItensCard extends StatelessWidget {
     final itens = state.itensFiltrados;
     if (itens.isEmpty) {
       if (state.isLoading) return const Center(child: SimCircularLoading());
-      return _Mensagem(
+      return SimMensagem(
         icone: state.busca.isEmpty ? Icons.playlist_add : Icons.search_off,
         texto: state.busca.isEmpty ? 'Nenhum item cadastrado ainda.' : 'Nenhum item encontrado.',
       );
@@ -163,36 +163,6 @@ class _LinhaItem extends StatelessWidget {
               onPressed: onExcluir,
               icon: const Icon(Icons.delete_outline, size: 18, color: SimTokens.colorNeutral500),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _Mensagem extends StatelessWidget {
-  const _Mensagem({required this.icone, required this.texto, this.acao});
-
-  final IconData icone;
-  final String texto;
-  final Widget? acao;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(Spacing.md.width),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icone, size: 32, color: SimTokens.colorNeutral400),
-            Spacing.xs.vertical,
-            Text(
-              texto,
-              textAlign: TextAlign.center,
-              style: SimTypography.bodySmRegular.copyWith(color: SimTokens.colorNeutral600),
-            ),
-            if (acao != null) ...[Spacing.sm.vertical, acao!],
           ],
         ),
       ),
