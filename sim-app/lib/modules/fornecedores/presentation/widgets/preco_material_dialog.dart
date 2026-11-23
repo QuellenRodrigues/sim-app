@@ -16,8 +16,8 @@ class PrecoMaterialDialog extends StatefulWidget {
 
   final int codigoFornecedor;
 
-  /// Materiais que o fornecedor fornece.
-  final List<MaterialFornecidoModel> materiais;
+  /// Grupos de compra que o fornecedor fornece.
+  final List<GrupoCompraModel> materiais;
 
   /// `null` para incluir.
   final PrecoMaterialModel? preco;
@@ -28,7 +28,7 @@ class PrecoMaterialDialog extends StatefulWidget {
   static Future<void> mostrar(
     BuildContext context, {
     required int codigoFornecedor,
-    required List<MaterialFornecidoModel> materiais,
+    required List<GrupoCompraModel> materiais,
     required Future<bool> Function(PrecoMaterialModel preco) onSalvar,
     PrecoMaterialModel? preco,
   }) {
@@ -59,7 +59,7 @@ class _PrecoMaterialDialogState extends State<PrecoMaterialDialog> {
     text: (widget.preco?.prazoDias ?? 0) > 0 ? widget.preco!.prazoDias.toString() : '',
   );
 
-  late MaterialFornecidoModel? _material = widget.preco?.material;
+  late GrupoCompraModel? _material = widget.preco?.grupo;
   late String _unidade = widget.preco?.unidade ?? _unidades.first;
   late FreteCotacao _frete = widget.preco?.frete ?? FreteCotacao.fob;
   bool _salvando = false;
@@ -86,7 +86,7 @@ class _PrecoMaterialDialogState extends State<PrecoMaterialDialog> {
       PrecoMaterialModel(
         codigo: widget.preco?.codigo,
         codigoFornecedor: widget.codigoFornecedor,
-        material: _material!,
+        grupo: _material!,
         especificacao: _especificacaoController.text.trim(),
         unidade: _unidade,
         preco: NumberFormatter.lerDecimal(_precoController.text)!,
@@ -137,13 +137,13 @@ class _PrecoMaterialDialogState extends State<PrecoMaterialDialog> {
               linhas: [
                 [
                   (
-                    SimDropdownField<MaterialFornecidoModel>(
-                      label: 'Material',
+                    SimDropdownField<GrupoCompraModel>(
+                      label: 'Grupo de compra',
                       obrigatorio: true,
                       hint: 'Selecione',
                       valor: _material,
                       itens: {for (final m in widget.materiais) m: m.nome},
-                      validator: (material) => material == null ? 'Escolha o material' : null,
+                      validator: (grupo) => grupo == null ? 'Escolha o grupo' : null,
                       onChanged: (material) => setState(() => _material = material),
                     ),
                     1,

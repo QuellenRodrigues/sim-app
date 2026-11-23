@@ -1,12 +1,13 @@
 import 'package:core/core.dart';
 
+import '../../../tabelas_auxiliares/tabelas_auxiliares.dart';
 import '../../domain/domain.dart';
 import 'fornecedores_datasource.dart';
 
 /// Fornecedores de exemplo, mantidos em memória enquanto o SIM não tem API.
 ///
-/// Os fornecedores e os preços são fictícios; o catálogo de materiais é o do banco do SIM de 2014
-/// e fica aqui até existir o cadastro de materiais. A lista é estática para sobreviver
+/// Os fornecedores e os preços são fictícios. O que cada um fornece são os grupos de compra das
+/// Tabelas auxiliares, como no SIM de 2017 (tabelas Fornecedores_materiais e Materiais_grupo). A lista é estática para sobreviver
 /// à troca de telas, como um servidor faria.
 class FornecedoresDatasourceMock implements FornecedoresDatasource {
   FornecedoresDatasourceMock({DateTime Function()? agora}) : _agora = agora ?? DateTime.now;
@@ -87,14 +88,14 @@ class FornecedoresDatasourceMock implements FornecedoresDatasource {
   }
 
   @override
-  Future<List<MaterialFornecidoModel>> listarMateriais(int codigo) async {
+  Future<List<GrupoCompraModel>> listarMateriais(int codigo) async {
     await Future<void>.delayed(_atraso);
     final codigos = _materiais[codigo] ?? const {};
     return _ordenados(_catalogo.where((m) => codigos.contains(m.codigo)));
   }
 
   @override
-  Future<List<MaterialFornecidoModel>> listarMateriaisDisponiveis(int codigo) async {
+  Future<List<GrupoCompraModel>> listarMateriaisDisponiveis(int codigo) async {
     await Future<void>.delayed(_atraso);
     final codigos = _materiais[codigo] ?? const {};
     return _ordenados(_catalogo.where((m) => !codigos.contains(m.codigo)));
@@ -111,7 +112,7 @@ class FornecedoresDatasourceMock implements FornecedoresDatasource {
   Future<void> removerMaterial(int codigo, int codigoMaterial) async {
     await Future<void>.delayed(_atraso);
     _materiais[codigo]?.remove(codigoMaterial);
-    _precos.removeWhere((p) => p.codigoFornecedor == codigo && p.material.codigo == codigoMaterial);
+    _precos.removeWhere((p) => p.codigoFornecedor == codigo && p.grupo.codigo == codigoMaterial);
   }
 
   @override
@@ -130,7 +131,7 @@ class FornecedoresDatasourceMock implements FornecedoresDatasource {
       (p) =>
           p.codigo != preco.codigo &&
           p.codigoFornecedor == preco.codigoFornecedor &&
-          p.material.codigo == preco.material.codigo &&
+          p.grupo.codigo == preco.grupo.codigo &&
           p.especificacao.normalizado == especificacao.normalizado,
     );
     if (repetido) throw DomainException(message: 'Este fornecedor já tem preço para este item.');
@@ -162,9 +163,9 @@ class FornecedoresDatasourceMock implements FornecedoresDatasource {
     bool contemTudo(String texto) => palavras.every(texto.normalizado.contains);
 
     final ativos = {for (final f in _fornecedores.where((f) => !f.inativo)) f.codigo!: f};
-    List<FornecedorModel> queFornecem(int material, Set<int> comPreco) {
+    List<FornecedorModel> queFornecem(int grupo, Set<int> comPreco) {
       return ativos.values
-          .where((f) => (_materiais[f.codigo] ?? const {}).contains(material) && !comPreco.contains(f.codigo))
+          .where((f) => (_materiais[f.codigo] ?? const {}).contains(grupo) && !comPreco.contains(f.codigo))
           .toList()
         ..sort((a, b) => a.razaoSocial.normalizado.compareTo(b.razaoSocial.normalizado));
     }
@@ -172,7 +173,7 @@ class FornecedoresDatasourceMock implements FornecedoresDatasource {
     final porItem = <String, List<PrecoMaterialModel>>{};
     for (final preco in _precos) {
       if (ativos.containsKey(preco.codigoFornecedor) && contemTudo(preco.nomeItem)) {
-        final chave = '${preco.material.codigo}|${preco.especificacao.normalizado}';
+        final chave = '${preco.grupo.codigo}|${preco.especificacao.normalizado}';
         porItem.putIfAbsent(chave, () => []).add(preco);
       }
     }
@@ -180,21 +181,21 @@ class FornecedoresDatasourceMock implements FornecedoresDatasource {
     final grupos = <GrupoPrecosModel>[
       for (final precos in porItem.values)
         GrupoPrecosModel(
-          material: precos.first.material,
+          grupo: precos.first.grupo,
           especificacao: precos.first.especificacao,
           ofertas: [
             for (final preco in precos..sort((a, b) => a.preco.compareTo(b.preco)))
               OfertaModel(fornecedor: ativos[preco.codigoFornecedor]!, preco: preco),
           ],
-          semPreco: queFornecem(precos.first.material.codigo, {for (final p in precos) p.codigoFornecedor}),
+          semPreco: queFornecem(precos.first.grupo.codigo, {for (final p in precos) p.codigoFornecedor}),
         ),
     ];
 
-    // Materiais encontrados pelo nome em que ninguém informou preço ainda.
-    final comGrupo = {for (final g in grupos) g.material.codigo};
-    for (final material in _catalogo.where((m) => contemTudo(m.nome) && !comGrupo.contains(m.codigo))) {
-      final fornecedores = queFornecem(material.codigo, const {});
-      if (fornecedores.isNotEmpty) grupos.add(GrupoPrecosModel(material: material, semPreco: fornecedores));
+    // Grupos encontrados pelo nome em que ninguém informou preço ainda.
+    final comPreco = {for (final g in grupos) g.grupo.codigo};
+    for (final grupo in _catalogo.where((g) => contemTudo(g.nome) && !comPreco.contains(g.codigo))) {
+      final fornecedores = queFornecem(grupo.codigo, const {});
+      if (fornecedores.isNotEmpty) grupos.add(GrupoPrecosModel(grupo: grupo, semPreco: fornecedores));
     }
 
     return grupos..sort((a, b) {
@@ -209,8 +210,8 @@ class FornecedoresDatasourceMock implements FornecedoresDatasource {
     return indice;
   }
 
-  List<MaterialFornecidoModel> _ordenados(Iterable<MaterialFornecidoModel> materiais) {
-    return materiais.toList()..sort((a, b) => a.nome.compareTo(b.nome));
+  List<GrupoCompraModel> _ordenados(Iterable<GrupoCompraModel> grupos) {
+    return grupos.toList()..sort((a, b) => a.nome.normalizado.compareTo(b.nome.normalizado));
   }
 
   static List<FornecedorModel> _iniciais() => [
@@ -287,8 +288,8 @@ class FornecedoresDatasourceMock implements FornecedoresDatasource {
     ),
     FornecedorModel(
       codigo: 6,
-      razaoSocial: 'Laboratório de Ensaios Resende Ltda.',
-      nomeFantasia: 'Lab Ensaios Resende',
+      razaoSocial: 'Ferramentas e Lubrificantes Resende Ltda.',
+      nomeFantasia: 'Ferramentas Resende',
       cnpj: '43.671.168/0001-31',
       endereco: 'Av. Marechal Castelo Branco, 77',
       bairro: 'Campos Elíseos',
@@ -297,7 +298,7 @@ class FornecedoresDatasourceMock implements FornecedoresDatasource {
       cep: '27542-090',
       contato: 'Beatriz Falcão',
       telefone1: '(24) 3355-9100',
-      email: 'laboratorio@ensaiosresende.com.br',
+      email: 'vendas@ferramentasresende.com.br',
     ),
     FornecedorModel(
       codigo: 7,
@@ -316,25 +317,26 @@ class FornecedoresDatasourceMock implements FornecedoresDatasource {
     ),
   ];
 
+  /// Códigos dos grupos de compra de cada fornecedor.
   static Map<int, Set<int>> _materiaisIniciais() => {
-    1: {2, 3, 7, 14, 15, 19},
-    2: {6, 12, 13, 22, 74},
-    3: {4, 9, 14, 26, 59, 75},
-    4: {14, 70, 71},
-    5: {66},
-    6: {83, 84, 16},
-    7: {68},
+    1: {6, 12, 20, 3, 23, 34},
+    2: {8, 9, 10, 11, 22},
+    3: {2, 3, 4, 12},
+    4: {12, 15, 16, 17},
+    5: {25},
+    6: {13, 24},
+    7: {29},
   };
 
-  static const _parafuso = MaterialFornecidoModel(codigo: 14, tipo: 'MAT. COMERCIAL', descricao: 'PARAFUSO');
-  static const _tuboSch40 = MaterialFornecidoModel(codigo: 12, tipo: 'TUBO', descricao: 'SCH. 40');
-  static const _barraRedonda = MaterialFornecidoModel(codigo: 2, tipo: 'BARRA', descricao: 'REDONDA');
+  static const _parafusos = GrupoCompraModel(codigo: 12, nome: 'PARAFUSOS');
+  static const _tuboSch = GrupoCompraModel(codigo: 9, nome: 'TUBO SCH');
+  static const _barraRedonda = GrupoCompraModel(codigo: 6, nome: 'BARRA REDONDA CARBONO');
 
   static List<PrecoMaterialModel> _precosIniciais() => [
     PrecoMaterialModel(
       codigo: 1,
       codigoFornecedor: 4,
-      material: _parafuso,
+      grupo: _parafusos,
       especificacao: 'M10 x 50 ZINCADO',
       unidade: 'UN',
       preco: 1.85,
@@ -346,7 +348,7 @@ class FornecedoresDatasourceMock implements FornecedoresDatasource {
     PrecoMaterialModel(
       codigo: 2,
       codigoFornecedor: 3,
-      material: _parafuso,
+      grupo: _parafusos,
       especificacao: 'M10 x 50 ZINCADO',
       unidade: 'UN',
       preco: 1.62,
@@ -358,7 +360,7 @@ class FornecedoresDatasourceMock implements FornecedoresDatasource {
     PrecoMaterialModel(
       codigo: 3,
       codigoFornecedor: 4,
-      material: _parafuso,
+      grupo: _parafusos,
       especificacao: 'M12 x 80 INOX',
       unidade: 'UN',
       preco: 6.4,
@@ -370,8 +372,8 @@ class FornecedoresDatasourceMock implements FornecedoresDatasource {
     PrecoMaterialModel(
       codigo: 4,
       codigoFornecedor: 2,
-      material: _tuboSch40,
-      especificacao: '2 POL. A106',
+      grupo: _tuboSch,
+      especificacao: 'SCH. 40 2 POL. A106',
       unidade: 'M',
       preco: 89.9,
       condicaoPagamento: '30/45/60',
@@ -381,7 +383,7 @@ class FornecedoresDatasourceMock implements FornecedoresDatasource {
     PrecoMaterialModel(
       codigo: 5,
       codigoFornecedor: 1,
-      material: _barraRedonda,
+      grupo: _barraRedonda,
       especificacao: '1 POL. SAE 1045',
       unidade: 'KG',
       preco: 14.7,
@@ -392,53 +394,8 @@ class FornecedoresDatasourceMock implements FornecedoresDatasource {
     ),
   ];
 
-  static const _catalogo = [
-    MaterialFornecidoModel(codigo: 7, tipo: 'BARRA', descricao: 'CHATA'),
-    MaterialFornecidoModel(codigo: 3, tipo: 'BARRA', descricao: 'QUADRADA'),
-    MaterialFornecidoModel(codigo: 2, tipo: 'BARRA', descricao: 'REDONDA'),
-    MaterialFornecidoModel(codigo: 33, tipo: 'BARRA', descricao: 'SEXTAVADA'),
-    MaterialFornecidoModel(codigo: 23, tipo: 'CANTONEIRA', descricao: 'ABAS IGUAIS'),
-    MaterialFornecidoModel(codigo: 15, tipo: 'CHAPA', descricao: 'FINA FRIO'),
-    MaterialFornecidoModel(codigo: 59, tipo: 'CHAPA', descricao: 'FINA QUENTE'),
-    MaterialFornecidoModel(codigo: 19, tipo: 'CHAPA', descricao: 'GROSSA'),
-    MaterialFornecidoModel(codigo: 81, tipo: 'CHAPA', descricao: 'OXICORTADA'),
-    MaterialFornecidoModel(codigo: 75, tipo: 'CHAPA', descricao: 'XADREZ'),
-    MaterialFornecidoModel(codigo: 82, tipo: 'MAT. COMERCIAL'),
-    MaterialFornecidoModel(codigo: 71, tipo: 'MAT. COMERCIAL', descricao: 'ACOPLAMENTO'),
-    MaterialFornecidoModel(codigo: 14, tipo: 'MAT. COMERCIAL', descricao: 'PARAFUSO'),
-    MaterialFornecidoModel(codigo: 70, tipo: 'MAT. COMERCIAL', descricao: 'ROLAMENTO'),
-    MaterialFornecidoModel(codigo: 77, tipo: 'PERFIL', descricao: 'H'),
-    MaterialFornecidoModel(codigo: 69, tipo: 'PERFIL', descricao: 'H (W)'),
-    MaterialFornecidoModel(codigo: 4, tipo: 'PERFIL', descricao: 'I P/ AMERICANO'),
-    MaterialFornecidoModel(codigo: 26, tipo: 'PERFIL', descricao: 'IPE'),
-    MaterialFornecidoModel(codigo: 27, tipo: 'PERFIL', descricao: 'IPN'),
-    MaterialFornecidoModel(codigo: 78, tipo: 'PERFIL', descricao: 'T'),
-    MaterialFornecidoModel(codigo: 9, tipo: 'PERFIL', descricao: 'U P/ AMERICANO'),
-    MaterialFornecidoModel(codigo: 62, tipo: 'PERFIL', descricao: 'W'),
-    MaterialFornecidoModel(codigo: 85, tipo: 'S. TERCEIRO'),
-    MaterialFornecidoModel(codigo: 65, tipo: 'S. TERCEIRO', descricao: 'BALANCEAM.'),
-    MaterialFornecidoModel(codigo: 68, tipo: 'S. TERCEIRO', descricao: 'FRETE'),
-    MaterialFornecidoModel(codigo: 80, tipo: 'S. TERCEIRO', descricao: 'MAN. ELETRICA'),
-    MaterialFornecidoModel(codigo: 67, tipo: 'S. TERCEIRO', descricao: 'REVESTIMENTO'),
-    MaterialFornecidoModel(codigo: 66, tipo: 'S. TERCEIRO', descricao: 'TRAT, TERMICO'),
-    MaterialFornecidoModel(codigo: 83, tipo: 'E.N.D.', descricao: 'LIQ. PENETRANTE'),
-    MaterialFornecidoModel(codigo: 84, tipo: 'E.N.D.', descricao: 'ULTRA SOM'),
-    MaterialFornecidoModel(codigo: 16, tipo: 'E.N.D.', descricao: 'VISUAL DE SOLDA'),
-    MaterialFornecidoModel(codigo: 64, tipo: 'TUBO', descricao: 'ELETRODUTO'),
-    MaterialFornecidoModel(codigo: 8, tipo: 'TUBO', descricao: 'INDUSTR. RED.'),
-    MaterialFornecidoModel(codigo: 73, tipo: 'TUBO', descricao: 'MEC. TREFILADO'),
-    MaterialFornecidoModel(codigo: 79, tipo: 'TUBO', descricao: 'MECANICO ST 52'),
-    MaterialFornecidoModel(codigo: 22, tipo: 'TUBO', descricao: 'QUADR.'),
-    MaterialFornecidoModel(codigo: 74, tipo: 'TUBO', descricao: 'RETANGULAR'),
-    MaterialFornecidoModel(codigo: 76, tipo: 'TUBO', descricao: 'SCH. 10'),
-    MaterialFornecidoModel(codigo: 60, tipo: 'TUBO', descricao: 'SCH. 100'),
-    MaterialFornecidoModel(codigo: 20, tipo: 'TUBO', descricao: 'SCH. 120'),
-    MaterialFornecidoModel(codigo: 61, tipo: 'TUBO', descricao: 'SCH. 140'),
-    MaterialFornecidoModel(codigo: 21, tipo: 'TUBO', descricao: 'SCH. 160'),
-    MaterialFornecidoModel(codigo: 6, tipo: 'TUBO', descricao: 'SCH. 20'),
-    MaterialFornecidoModel(codigo: 12, tipo: 'TUBO', descricao: 'SCH. 40'),
-    MaterialFornecidoModel(codigo: 13, tipo: 'TUBO', descricao: 'SCH. 80'),
-    MaterialFornecidoModel(codigo: 28, tipo: 'TUBO', descricao: 'VMEC 134 AP'),
-    MaterialFornecidoModel(codigo: 24, tipo: 'TUBO', descricao: 'XXS'),
+  static List<GrupoCompraModel> get _catalogo => [
+    for (final item in TabelasAuxiliaresDatasourceMock.ativos(TabelaAuxiliar.gruposCompra))
+      GrupoCompraModel(codigo: item.codigo!, nome: item.descricao),
   ];
 }

@@ -54,7 +54,7 @@ class GrupoPrecosCard extends StatelessWidget {
           if (grupo.semPreco.isNotEmpty) ...[
             Spacing.xs.vertical,
             Text(
-              ofertas.isEmpty ? 'Fornecem este material, sem preço informado:' : 'Sem preço para este item:',
+              ofertas.isEmpty ? 'Fornecem este grupo, sem preço informado:' : 'Sem preço para este item:',
               style: SimTypography.bodyXsRegular,
             ),
             const SizedBox(height: 4),

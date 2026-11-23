@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 
 import '../../domain/domain.dart';
 
-/// Catálogo de materiais para marcar vários de uma vez, como a grade do sistema antigo.
+/// Grupos de compra para marcar vários de uma vez, como a grade do sistema antigo.
 class MateriaisFornecedorDialog extends StatefulWidget {
   const MateriaisFornecedorDialog({required this.disponiveis, super.key});
 
-  final List<MaterialFornecidoModel> disponiveis;
+  final List<GrupoCompraModel> disponiveis;
 
   /// Retorna os códigos marcados, ou `null` se a pessoa cancelar.
   static Future<List<int>?> mostrar(
     BuildContext context, {
-    required List<MaterialFornecidoModel> disponiveis,
+    required List<GrupoCompraModel> disponiveis,
   }) {
     return showDialog<List<int>>(
       context: context,
@@ -28,7 +28,7 @@ class _MateriaisFornecedorDialogState extends State<MateriaisFornecedorDialog> {
   final Set<int> _marcados = {};
   String _busca = '';
 
-  List<MaterialFornecidoModel> get _filtrados {
+  List<GrupoCompraModel> get _filtrados {
     final termo = _busca.trim().normalizado;
     if (termo.isEmpty) return widget.disponiveis;
     return widget.disponiveis.where((m) => m.nome.normalizado.contains(termo)).toList();
@@ -49,7 +49,7 @@ class _MateriaisFornecedorDialogState extends State<MateriaisFornecedorDialog> {
       backgroundColor: SimTokens.colorWhite,
       surfaceTintColor: SimTokens.transparent,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SimTokens.roundedLg)),
-      title: Text('Adicionar materiais', style: SimTypography.titleLgMedium),
+      title: Text('Adicionar grupos de compra', style: SimTypography.titleLgMedium),
       content: SizedBox(
         width: 460,
         height: 420,
@@ -62,7 +62,7 @@ class _MateriaisFornecedorDialogState extends State<MateriaisFornecedorDialog> {
               textInputAction: TextInputAction.search,
               style: SimTypography.bodySmRegular,
               decoration: const InputDecoration(
-                hintText: 'Buscar material',
+                hintText: 'Buscar grupo',
                 constraints: BoxConstraints(minHeight: 44),
                 prefixIcon: Icon(Icons.search, size: 20, color: SimTokens.colorNeutral500),
               ),
@@ -73,8 +73,8 @@ class _MateriaisFornecedorDialogState extends State<MateriaisFornecedorDialog> {
                   ? SimMensagem(
                       icone: Icons.search_off,
                       texto: widget.disponiveis.isEmpty
-                          ? 'Este fornecedor já tem todos os materiais do catálogo.'
-                          : 'Nenhum material encontrado.',
+                          ? 'Este fornecedor já tem todos os grupos de compra.'
+                          : 'Nenhum grupo encontrado.',
                     )
                   : ListView.builder(
                       itemCount: filtrados.length,

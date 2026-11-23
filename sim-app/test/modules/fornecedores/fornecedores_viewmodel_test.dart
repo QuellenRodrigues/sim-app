@@ -54,7 +54,7 @@ void main() {
       expect(viewModel.state.estado, UnidadeFederativa.mg);
       await _aguardarDatasource();
 
-      expect(viewModel.state.materiais.map((m) => m.nome), contains('TUBO SCH. 40'));
+      expect(viewModel.state.materiais.map((m) => m.nome), contains('TUBO SCH'));
       expect(viewModel.state.materiais, hasLength(5));
       viewModel.dispose();
     });
@@ -126,16 +126,16 @@ void main() {
       await _aguardarDatasource();
       viewModel.selecionar(_porCodigo(viewModel, 4));
       await _aguardarDatasource();
-      expect(viewModel.state.materiais, hasLength(3));
-
-      final disponiveis = await viewModel.materiaisDisponiveis();
-      expect(disponiveis!.map((m) => m.codigo), isNot(contains(70)));
-
-      await viewModel.adicionarMateriais([disponiveis.first.codigo]);
       expect(viewModel.state.materiais, hasLength(4));
 
-      await viewModel.removerMaterial(viewModel.state.materiais.firstWhere((m) => m.codigo == 70));
-      expect(viewModel.state.materiais.map((m) => m.codigo), isNot(contains(70)));
+      final disponiveis = await viewModel.materiaisDisponiveis();
+      expect(disponiveis!.map((m) => m.codigo), isNot(contains(15)));
+
+      await viewModel.adicionarMateriais([disponiveis.first.codigo]);
+      expect(viewModel.state.materiais, hasLength(5));
+
+      await viewModel.removerMaterial(viewModel.state.materiais.firstWhere((m) => m.codigo == 15));
+      expect(viewModel.state.materiais.map((m) => m.codigo), isNot(contains(15)));
       viewModel.dispose();
     });
 
@@ -149,7 +149,7 @@ void main() {
       final salvou = await viewModel.salvarPreco(
         PrecoMaterialModel(
           codigoFornecedor: 4,
-          material: viewModel.state.materiais.firstWhere((m) => m.codigo == 70),
+          grupo: viewModel.state.materiais.firstWhere((m) => m.codigo == 15),
           especificacao: ' 6205 ZZ ',
           unidade: 'UN',
           preco: 32.5,
@@ -172,7 +172,7 @@ void main() {
       final salvou = await viewModel.salvarPreco(
         PrecoMaterialModel(
           codigoFornecedor: 4,
-          material: existente.material,
+          grupo: existente.grupo,
           especificacao: existente.especificacao.toLowerCase(),
           unidade: 'UN',
           preco: 1,
@@ -192,7 +192,7 @@ void main() {
       await _aguardarDatasource();
       expect(viewModel.state.precos, hasLength(1));
 
-      await viewModel.removerMaterial(viewModel.state.materiais.firstWhere((m) => m.codigo == 12));
+      await viewModel.removerMaterial(viewModel.state.materiais.firstWhere((m) => m.codigo == 9));
 
       expect(viewModel.state.precos, isEmpty);
       viewModel.dispose();

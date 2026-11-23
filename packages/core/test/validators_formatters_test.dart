@@ -56,4 +56,13 @@ void main() {
     expect(NumberFormatter.lerDecimal(' 2,5 '), 2.5);
     expect(NumberFormatter.lerDecimal('abc'), isNull);
   });
+
+  test('combinaCom procura pelo começo das palavras, sem acentos', () {
+    expect('TUBO SCH. 40'.combinaCom('tubo sch 40'), isTrue);
+    expect('TUBO SCH. 140'.combinaCom('tubo sch 40'), isFalse);
+    expect('Preparação'.combinaCom('prep'), isTrue);
+    expect('BARRA REDONDA'.combinaCom('redonda barra'), isTrue);
+    expect('BARRA REDONDA'.combinaCom('onda'), isFalse);
+    expect('qualquer coisa'.combinaCom('  '), isTrue);
+  });
 }

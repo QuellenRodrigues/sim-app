@@ -50,7 +50,7 @@ class FornecedoresState extends ViewModelState {
   final bool inativo;
 
   /// Materiais fornecidos pelo [selecionado].
-  final List<MaterialFornecidoModel> materiais;
+  final List<GrupoCompraModel> materiais;
 
   /// Preços informados pelo [selecionado].
   final List<PrecoMaterialModel> precos;
@@ -71,7 +71,7 @@ class FornecedoresState extends ViewModelState {
     UnidadeFederativa? estado,
     bool limparEstado = false,
     bool? inativo,
-    List<MaterialFornecidoModel>? materiais,
+    List<GrupoCompraModel>? materiais,
     List<PrecoMaterialModel>? precos,
     bool? carregandoMateriais,
     String? erroMateriais,

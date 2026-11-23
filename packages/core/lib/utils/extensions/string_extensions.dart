@@ -27,4 +27,18 @@ extension StringExtensions on String {
     }
     return buffer.toString();
   }
+
+  /// Se cada palavra de [busca] é o começo de alguma palavra deste texto, sem diferenciar
+  /// acentos nem maiúsculas. Ex.: "TUBO SCH. 40" combina com "tubo sch 40", mas "TUBO SCH. 140", não.
+  /// Busca vazia combina com tudo.
+  bool combinaCom(String busca) {
+    final palavras = normalizado.split(_separadores).where((p) => p.isNotEmpty).toList();
+    return busca.normalizado
+        .split(_separadores)
+        .where((termo) => termo.isNotEmpty)
+        .every((termo) => palavras.any((palavra) => palavra.startsWith(termo)));
+  }
 }
+
+/// Espaços e pontuação que separam palavras numa busca ("SCH. 40" → "sch", "40").
+final _separadores = RegExp(r'[\s.]+');

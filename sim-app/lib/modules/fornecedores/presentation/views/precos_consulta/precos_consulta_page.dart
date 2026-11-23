@@ -96,7 +96,7 @@ class _PrecosConsultaPageState extends ViewState<PrecosConsultaPage, PrecosConsu
           ? const Center(child: SimCircularLoading())
           : const SimMensagem(
               icone: Icons.search_off,
-              texto: 'Nenhum fornecedor encontrado para este material.',
+              texto: 'Nenhum fornecedor encontrado para este item.',
             );
     }
 

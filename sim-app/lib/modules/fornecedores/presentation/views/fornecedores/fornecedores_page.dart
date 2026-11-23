@@ -39,13 +39,13 @@ class _FornecedoresPageState extends ViewState<FornecedoresPage, FornecedoresVie
     if (codigos != null) await viewModel.adicionarMateriais(codigos);
   }
 
-  /// Remover o material apaga os preços dele, por isso pede confirmação só nesse caso.
-  Future<void> _removerMaterial(FornecedoresState state, MaterialFornecidoModel material) async {
-    final precos = state.precos.where((p) => p.material == material).length;
+  /// Remover o grupo apaga os preços dele, por isso pede confirmação só nesse caso.
+  Future<void> _removerMaterial(FornecedoresState state, GrupoCompraModel material) async {
+    final precos = state.precos.where((p) => p.grupo == material).length;
     if (precos > 0) {
       final confirmou = await SimDialog.confirmar(
         context,
-        titulo: 'Remover material?',
+        titulo: 'Remover grupo de compra?',
         mensagem: precos == 1
             ? '"${material.nome}" tem 1 preço informado, que também será removido.'
             : '"${material.nome}" tem $precos preços informados, que também serão removidos.',

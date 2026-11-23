@@ -24,12 +24,12 @@ class FornecedoresRepositoryImpl implements FornecedoresRepository {
   }
 
   @override
-  Future<Either<BaseException, List<MaterialFornecidoModel>>> listarMateriais(int codigo) {
+  Future<Either<BaseException, List<GrupoCompraModel>>> listarMateriais(int codigo) {
     return _executar(() => _datasource.listarMateriais(codigo), 'Não foi possível carregar os materiais.');
   }
 
   @override
-  Future<Either<BaseException, List<MaterialFornecidoModel>>> listarMateriaisDisponiveis(int codigo) {
+  Future<Either<BaseException, List<GrupoCompraModel>>> listarMateriaisDisponiveis(int codigo) {
     return _executar(
       () => _datasource.listarMateriaisDisponiveis(codigo),
       'Não foi possível carregar o catálogo de materiais.',

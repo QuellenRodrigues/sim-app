@@ -5,6 +5,7 @@ import '../cadastros/cadastros.dart';
 import '../clientes/clientes.dart';
 import '../fornecedores/fornecedores.dart';
 import '../home/home.dart';
+import '../materiais/materiais.dart';
 import '../tabelas_auxiliares/tabelas_auxiliares.dart';
 import 'menu.dart';
 
@@ -39,6 +40,11 @@ class MenuModule extends Module {
         ModuleRoute(
           '/cadastros/fornecedores/',
           module: FornecedoresModule(),
+          transition: TransitionType.fadeIn,
+        ),
+        ModuleRoute(
+          '/cadastros/materiais/',
+          module: MateriaisModule(),
           transition: TransitionType.fadeIn,
         ),
         ModuleRoute(

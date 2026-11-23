@@ -38,10 +38,11 @@ enum CadastrosEnum {
     grupo: 'Fábrica',
   ),
   materiais(
-    nome: 'Materiais e tabelas de valores',
-    descricao: 'Barras, chapas, perfis e tubos com medidas, peso e preço.',
+    nome: 'Materiais',
+    descricao: 'Barras, chapas, perfis e tubos, com as tabelas de bitolas e pesos.',
     icone: Icons.view_in_ar_outlined,
     grupo: 'Fábrica',
+    rota: '/menu/cadastros/materiais/',
   ),
   tabelasAuxiliares(
     nome: 'Tabelas auxiliares',

@@ -30,6 +30,13 @@ enum TabelaAuxiliar {
     area: 'Comercial',
   ),
 
+  /// Materiais_grupo (SIM de 2017)
+  gruposCompra(
+    titulo: 'Grupos de compra',
+    descricao: 'O que os fornecedores fornecem: parafusos, rolamentos, tubo SCH, transportadoras…',
+    area: 'Comercial',
+  ),
+
   /// SERVICO
   tiposServico(
     titulo: 'Tipos de serviço',

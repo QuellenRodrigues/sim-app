@@ -13,10 +13,10 @@ abstract class FornecedoresRepository {
   Future<Either<BaseException, FornecedorModel>> alternarSuspensao(int codigo);
 
   /// Materiais que o fornecedor fornece.
-  Future<Either<BaseException, List<MaterialFornecidoModel>>> listarMateriais(int codigo);
+  Future<Either<BaseException, List<GrupoCompraModel>>> listarMateriais(int codigo);
 
   /// Materiais do catálogo que o fornecedor ainda não fornece.
-  Future<Either<BaseException, List<MaterialFornecidoModel>>> listarMateriaisDisponiveis(int codigo);
+  Future<Either<BaseException, List<GrupoCompraModel>>> listarMateriaisDisponiveis(int codigo);
 
   Future<Either<BaseException, Unit>> adicionarMateriais(int codigo, List<int> codigosMateriais);
 

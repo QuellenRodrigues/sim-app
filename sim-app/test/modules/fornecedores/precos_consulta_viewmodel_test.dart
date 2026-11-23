@@ -21,7 +21,7 @@ void main() {
       await _buscar(viewModel, 'parafuso m10');
 
       final grupo = viewModel.state.grupos.single;
-      expect(grupo.nome, 'MAT. COMERCIAL PARAFUSO M10 x 50 ZINCADO');
+      expect(grupo.nome, 'PARAFUSOS M10 x 50 ZINCADO');
       expect(grupo.ofertas.map((o) => o.preco.preco), [1.62, 1.85]);
       expect(grupo.ofertas.first.fornecedor.nomeFantasia, 'Perfis Campo Belo');
       expect(grupo.menorPreco, 1.62);
@@ -46,22 +46,22 @@ void main() {
       viewModel.dispose();
     });
 
-    test('material sem nenhum preço aparece com os fornecedores', () async {
+    test('grupo sem nenhum preço aparece com os fornecedores', () async {
       final viewModel = _viewModel();
 
-      await _buscar(viewModel, 'ultra som');
+      await _buscar(viewModel, 'lubrificantes');
 
       final grupo = viewModel.state.grupos.single;
       expect(grupo.ofertas, isEmpty);
       expect(grupo.menorPreco, isNull);
-      expect(grupo.semPreco.single.nomeFantasia, 'Lab Ensaios Resende');
+      expect(grupo.semPreco.single.nomeFantasia, 'Ferramentas Resende');
       viewModel.dispose();
     });
 
     test('deixa os fornecedores inativos de fora, mas mantém os suspensos', () async {
       final viewModel = _viewModel();
 
-      await _buscar(viewModel, 'frete');
+      await _buscar(viewModel, 'transportadoras');
       expect(viewModel.state.grupos, isEmpty);
 
       await _buscar(viewModel, 'trat');
@@ -74,7 +74,7 @@ void main() {
       await _datasource().salvarPreco(
         const PrecoMaterialModel(
           codigoFornecedor: 1,
-          material: MaterialFornecidoModel(codigo: 14, tipo: 'MAT. COMERCIAL', descricao: 'PARAFUSO'),
+          grupo: GrupoCompraModel(codigo: 12, nome: 'PARAFUSOS'),
           especificacao: 'm10 X 50 zincado',
           unidade: 'UN',
           preco: 1.5,

@@ -64,8 +64,18 @@ void main() {
       viewModel.selecionarTabela(TabelaAuxiliar.tiposMaterial);
       await _aguardarDatasource();
 
-      expect(viewModel.state.itens, hasLength(21));
+      expect(viewModel.state.itens, hasLength(18));
       expect(viewModel.state.itens.map((i) => i.descricao), contains('E.N.D.'));
+      viewModel.dispose();
+    });
+
+    test('traz os grupos de compra do SIM de 2017, com o PERFIL repetido como no banco', () async {
+      final viewModel = _viewModel();
+      viewModel.selecionarTabela(TabelaAuxiliar.gruposCompra);
+      await _aguardarDatasource();
+
+      expect(viewModel.state.itens, hasLength(34));
+      expect(viewModel.state.itens.where((i) => i.descricao == 'PERFIL'), hasLength(2));
       viewModel.dispose();
     });
 

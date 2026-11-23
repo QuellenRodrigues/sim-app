@@ -187,7 +187,7 @@ class FornecedoresViewModel extends ViewModel<FornecedoresState> {
   }
 
   /// Catálogo sem o que o fornecedor já fornece; `null` se não conseguiu carregar.
-  Future<List<MaterialFornecidoModel>?> materiaisDisponiveis() async {
+  Future<List<GrupoCompraModel>?> materiaisDisponiveis() async {
     final codigo = state.selecionado?.codigo;
     if (codigo == null) return null;
 
@@ -213,7 +213,7 @@ class FornecedoresViewModel extends ViewModel<FornecedoresState> {
     await carregarMateriais();
   }
 
-  Future<void> removerMaterial(MaterialFornecidoModel material) async {
+  Future<void> removerMaterial(GrupoCompraModel material) async {
     final codigo = state.selecionado?.codigo;
     if (codigo == null) return;
 

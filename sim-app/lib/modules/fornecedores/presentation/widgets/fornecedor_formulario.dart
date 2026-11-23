@@ -32,7 +32,7 @@ class FornecedorFormulario extends StatelessWidget {
   final VoidCallback onCancelar;
   final VoidCallback onSuspender;
   final VoidCallback onAdicionarMateriais;
-  final ValueChanged<MaterialFornecidoModel> onRemoverMaterial;
+  final ValueChanged<GrupoCompraModel> onRemoverMaterial;
   final VoidCallback onAdicionarPreco;
   final ValueChanged<PrecoMaterialModel> onEditarPreco;
   final ValueChanged<PrecoMaterialModel> onExcluirPreco;
@@ -367,7 +367,8 @@ class _Inativo extends StatelessWidget {
   }
 }
 
-/// Materiais fornecidos. Como no sistema antigo, são gravados na hora, sem passar pelo "Salvar".
+/// Grupos de compra que o fornecedor fornece. Como no sistema antigo, são gravados na hora,
+/// sem passar pelo "Salvar".
 class _Materiais extends StatelessWidget {
   const _Materiais({
     required this.state,
@@ -378,7 +379,7 @@ class _Materiais extends StatelessWidget {
 
   final FornecedoresState state;
   final VoidCallback onAdicionar;
-  final ValueChanged<MaterialFornecidoModel> onRemover;
+  final ValueChanged<GrupoCompraModel> onRemover;
   final VoidCallback onTentarNovamente;
 
   @override
@@ -388,7 +389,11 @@ class _Materiais extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SimTituloSecao(titulo: 'Materiais fornecidos', icone: Icons.inventory_2_outlined),
+        const SimTituloSecao(
+          titulo: 'Grupos de compra',
+          descricao: 'O que este fornecedor fornece.',
+          icone: Icons.inventory_2_outlined,
+        ),
         Spacing.sm.vertical,
         _conteudo(salvo),
         if (salvo) ...[
@@ -396,7 +401,7 @@ class _Materiais extends StatelessWidget {
           Align(
             alignment: Alignment.centerLeft,
             child: SimButton(
-              label: 'Adicionar materiais',
+              label: 'Adicionar grupos',
               icon: Icons.add,
               style: SimButtonStyle.secundario,
               onPressed: onAdicionar,
@@ -409,7 +414,7 @@ class _Materiais extends StatelessWidget {
 
   Widget _conteudo(bool salvo) {
     if (!salvo) {
-      return _Aviso('Salve o fornecedor para informar os materiais que ele fornece.');
+      return _Aviso('Salve o fornecedor para informar o que ele fornece.');
     }
     if (state.erroMateriais != null) {
       return SimMensagem(
@@ -425,7 +430,7 @@ class _Materiais extends StatelessWidget {
     if (state.materiais.isEmpty) {
       return state.carregandoMateriais
           ? const Center(child: SimCircularLoading())
-          : _Aviso('Nenhum material informado.');
+          : _Aviso('Nenhum grupo de compra informado.');
     }
 
     return Wrap(

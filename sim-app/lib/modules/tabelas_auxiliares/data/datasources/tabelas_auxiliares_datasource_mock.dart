@@ -5,8 +5,9 @@ import 'tabelas_auxiliares_datasource.dart';
 
 /// Tabelas auxiliares mantidas em memória enquanto o SIM não tem API.
 ///
-/// Os valores iniciais são os do banco do SIM de 2014, sem o tipo "TESTE", que nenhum material usa.
-/// O tipo "TESTE 2" aparece como "E.N.D.", nome que recebeu no banco de 2017.
+/// Os valores iniciais são os do banco do SIM de 2014; os tipos de material e os grupos de compra
+/// são os do banco de 2017 (o antigo tipo "TESTE 2" aparece como "E.N.D."). Os grupos de compra
+/// mantêm o "PERFIL" repetido (códigos 2 e 33), como no banco.
 /// A lista é estática para sobreviver à troca de telas, como um servidor faria.
 class TabelasAuxiliaresDatasourceMock implements TabelasAuxiliaresDatasource {
   static final Map<TabelaAuxiliar, List<ItemTabelaModel>> _itens = _copiaDosIniciais();
@@ -21,6 +22,14 @@ class TabelasAuxiliaresDatasourceMock implements TabelasAuxiliaresDatasource {
       ..clear()
       ..addAll(_copiaDosIniciais());
     _excluidos.clear();
+  }
+
+  /// Itens não excluídos da [tabela], em ordem alfabética, para outros cadastros de exemplo
+  /// (como os grupos de compra dos fornecedores).
+  static List<ItemTabelaModel> ativos(TabelaAuxiliar tabela) {
+    final excluidos = _excluidos[tabela] ?? const {};
+    return (_itens[tabela] ?? const <ItemTabelaModel>[]).where((i) => !excluidos.contains(i.codigo)).toList()
+      ..sort((a, b) => a.descricao.normalizado.compareTo(b.descricao.normalizado));
   }
 
   static Map<TabelaAuxiliar, List<ItemTabelaModel>> _copiaDosIniciais() => {
@@ -111,9 +120,7 @@ class TabelasAuxiliaresDatasourceMock implements TabelasAuxiliaresDatasource {
       ItemTabelaModel(codigo: 4, descricao: 'BARRA'),
       ItemTabelaModel(codigo: 8, descricao: 'CHAPA'),
       ItemTabelaModel(codigo: 9, descricao: 'MAT. COMERCIAL'),
-      ItemTabelaModel(codigo: 10, descricao: 'GROSSA'),
       ItemTabelaModel(codigo: 11, descricao: 'E.N.D.'),
-      ItemTabelaModel(codigo: 12, descricao: 'PERFIL IPE'),
       ItemTabelaModel(codigo: 13, descricao: 'T. TERMICO'),
       ItemTabelaModel(codigo: 15, descricao: 'S. TERCEIRO'),
       ItemTabelaModel(codigo: 16, descricao: 'SOLDA'),
@@ -121,11 +128,10 @@ class TabelasAuxiliaresDatasourceMock implements TabelasAuxiliaresDatasource {
       ItemTabelaModel(codigo: 18, descricao: 'BORRACHA'),
       ItemTabelaModel(codigo: 19, descricao: 'REVESTIMENTO'),
       ItemTabelaModel(codigo: 20, descricao: 'ROLAMENTO'),
+      ItemTabelaModel(codigo: 21, descricao: 'PINTURA'),
       ItemTabelaModel(codigo: 22, descricao: 'MAN. ELETRICA'),
       ItemTabelaModel(codigo: 23, descricao: 'BARRA INOX'),
       ItemTabelaModel(codigo: 24, descricao: 'PROVISORIAMENTE SEM MATERIAL'),
-      ItemTabelaModel(codigo: 25, descricao: 'ELETRODO'),
-      ItemTabelaModel(codigo: 26, descricao: 'PINTURA'),
     ],
     TabelaAuxiliar.qualidadesMaterial: [
       ItemTabelaModel(codigo: 1, descricao: 'AÇO INOX'),
@@ -159,6 +165,42 @@ class TabelasAuxiliaresDatasourceMock implements TabelasAuxiliaresDatasource {
       ItemTabelaModel(codigo: 21, descricao: 'CHAPAS ESPECIAIS'),
       ItemTabelaModel(codigo: 22, descricao: 'QUALIF. DE SOLDADOR'),
       ItemTabelaModel(codigo: 23, descricao: 'HORA EXTRA (%)'),
+    ],
+    TabelaAuxiliar.gruposCompra: [
+      ItemTabelaModel(codigo: 1, descricao: 'MATERIAL COMERCIAL'),
+      ItemTabelaModel(codigo: 2, descricao: 'PERFIL'),
+      ItemTabelaModel(codigo: 3, descricao: 'CHAPA INTEIRA'),
+      ItemTabelaModel(codigo: 4, descricao: 'CHAPA OXICORTADA'),
+      ItemTabelaModel(codigo: 5, descricao: 'CHAPA DE AÇO INOX'),
+      ItemTabelaModel(codigo: 6, descricao: 'BARRA REDONDA CARBONO'),
+      ItemTabelaModel(codigo: 7, descricao: 'BARRA REDONDA INOX'),
+      ItemTabelaModel(codigo: 8, descricao: 'TUBO CENTRIFUGADO'),
+      ItemTabelaModel(codigo: 9, descricao: 'TUBO SCH'),
+      ItemTabelaModel(codigo: 10, descricao: 'TUBO MECANICO'),
+      ItemTabelaModel(codigo: 11, descricao: 'TUBO DE AÇO INOX'),
+      ItemTabelaModel(codigo: 12, descricao: 'PARAFUSOS'),
+      ItemTabelaModel(codigo: 13, descricao: 'FERRAMENTAS'),
+      ItemTabelaModel(codigo: 14, descricao: 'BARRA REDONDA TREFILADA'),
+      ItemTabelaModel(codigo: 15, descricao: 'ROLAMENTOS'),
+      ItemTabelaModel(codigo: 16, descricao: 'MANCAIS'),
+      ItemTabelaModel(codigo: 17, descricao: 'ACOPLAMENTOS'),
+      ItemTabelaModel(codigo: 18, descricao: 'REVEST. DE BORRACHA'),
+      ItemTabelaModel(codigo: 19, descricao: 'TUBO CALANDRADO'),
+      ItemTabelaModel(codigo: 20, descricao: 'BARRA CHATA'),
+      ItemTabelaModel(codigo: 21, descricao: 'ELETRODO'),
+      ItemTabelaModel(codigo: 22, descricao: 'TUBO QUADRADO (METALON)'),
+      ItemTabelaModel(codigo: 23, descricao: 'CHAPA FINA'),
+      ItemTabelaModel(codigo: 24, descricao: 'LUBRIFICANTES'),
+      ItemTabelaModel(codigo: 25, descricao: 'TRAT. TERMICO'),
+      ItemTabelaModel(codigo: 26, descricao: 'POLIMERO (NYLON, TEFLON, ETC)'),
+      ItemTabelaModel(codigo: 27, descricao: 'CELERON'),
+      ItemTabelaModel(codigo: 28, descricao: 'TINTAS'),
+      ItemTabelaModel(codigo: 29, descricao: 'TRANSPORTADORAS'),
+      ItemTabelaModel(codigo: 30, descricao: 'BORRACHAS, MANGUEIRAS, ETC'),
+      ItemTabelaModel(codigo: 31, descricao: 'FUNDIÇÃO'),
+      ItemTabelaModel(codigo: 32, descricao: 'MOLAS'),
+      ItemTabelaModel(codigo: 33, descricao: 'PERFIL'),
+      ItemTabelaModel(codigo: 34, descricao: 'CHAPA GROSSA'),
     ],
     TabelaAuxiliar.tiposServico: [
       ItemTabelaModel(codigo: 1, descricao: 'SERVICO'),

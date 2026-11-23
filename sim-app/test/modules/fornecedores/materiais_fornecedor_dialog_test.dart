@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _materiais = [
-  MaterialFornecidoModel(codigo: 1, tipo: 'BARRA', descricao: 'REDONDA'),
-  MaterialFornecidoModel(codigo: 2, tipo: 'TUBO', descricao: 'SCH. 40'),
-  MaterialFornecidoModel(codigo: 3, tipo: 'CHAPA', descricao: 'GROSSA'),
+  GrupoCompraModel(codigo: 6, nome: 'BARRA REDONDA CARBONO'),
+  GrupoCompraModel(codigo: 9, nome: 'TUBO SCH'),
+  GrupoCompraModel(codigo: 34, nome: 'CHAPA GROSSA'),
 ];
 
 /// Abre o diálogo e devolve uma função que lê o resultado depois que ele fecha.
@@ -38,20 +38,20 @@ void main() {
   testWidgets('devolve os materiais marcados, mesmo depois de filtrar a lista', (tester) async {
     final resultado = await _abrir(tester);
 
-    await tester.tap(find.text('BARRA REDONDA'));
+    await tester.tap(find.text('BARRA REDONDA CARBONO'));
     await tester.pumpAndSettle();
     expect(tester.widget<CheckboxListTile>(find.byType(CheckboxListTile).first).value, isTrue);
 
     await tester.enterText(find.byType(TextField), 'tubo');
     await tester.pumpAndSettle();
-    expect(find.text('BARRA REDONDA'), findsNothing);
-    await tester.tap(find.text('TUBO SCH. 40'));
+    expect(find.text('BARRA REDONDA CARBONO'), findsNothing);
+    await tester.tap(find.text('TUBO SCH'));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Adicionar (2)'));
     await tester.pumpAndSettle();
 
-    expect(resultado(), unorderedEquals([1, 2]));
+    expect(resultado(), unorderedEquals([6, 9]));
   });
 
   testWidgets('não adiciona sem marcar nada', (tester) async {

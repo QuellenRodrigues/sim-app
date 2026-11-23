@@ -1,6 +1,6 @@
 import 'package:core/core.dart';
 
-import 'material_fornecido_model.dart';
+import 'grupo_compra_model.dart';
 
 /// Frete da cotação, com os valores usados no SIM antigo.
 enum FreteCotacao {
@@ -15,13 +15,13 @@ enum FreteCotacao {
 
 /// Preço de um item específico em um fornecedor.
 ///
-/// O catálogo do SIM antigo é genérico (um único "PARAFUSO"), por isso a [especificacao]
-/// identifica o item: "M10 x 50 zincado". Os demais campos vêm do retorno de cotação
+/// O grupo de compra é genérico ("PARAFUSOS"), por isso a [especificacao] identifica o item:
+/// "M10 x 50 zincado". Os demais campos vêm do retorno de cotação
 /// (tabela COMPRAS_FORNECEDOR_RETORNO_PRECO), sem ICMS e ISS, sempre zerados no banco.
 class PrecoMaterialModel extends Equatable {
   const PrecoMaterialModel({
     required this.codigoFornecedor,
-    required this.material,
+    required this.grupo,
     required this.especificacao,
     required this.unidade,
     required this.preco,
@@ -36,7 +36,7 @@ class PrecoMaterialModel extends Equatable {
   /// `null` enquanto o preço não foi salvo.
   final int? codigo;
   final int codigoFornecedor;
-  final MaterialFornecidoModel material;
+  final GrupoCompraModel grupo;
   final String especificacao;
 
   /// Unidade do preço: UN, KG, M…
@@ -56,14 +56,14 @@ class PrecoMaterialModel extends Equatable {
   /// Quando o preço foi informado; preenchida ao salvar.
   final DateTime? data;
 
-  /// "TUBO SCH. 40 2 pol." ou só o material, se não houver especificação.
-  String get nomeItem => [material.nome, especificacao].where((p) => p.isNotEmpty).join(' ');
+  /// "PARAFUSOS M10 x 50 zincado", ou só o grupo, se não houver especificação.
+  String get nomeItem => [grupo.nome, especificacao].where((p) => p.isNotEmpty).join(' ');
 
   PrecoMaterialModel copyWith({int? codigo, DateTime? data, String? especificacao}) {
     return PrecoMaterialModel(
       codigo: codigo ?? this.codigo,
       codigoFornecedor: codigoFornecedor,
-      material: material,
+      grupo: grupo,
       especificacao: especificacao ?? this.especificacao,
       unidade: unidade,
       preco: preco,
@@ -79,7 +79,7 @@ class PrecoMaterialModel extends Equatable {
   List<Object?> get props => [
     codigo,
     codigoFornecedor,
-    material,
+    grupo,
     especificacao,
     unidade,
     preco,

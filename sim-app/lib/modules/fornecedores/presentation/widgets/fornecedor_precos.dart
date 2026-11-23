@@ -16,7 +16,7 @@ class FornecedorPrecos extends StatelessWidget {
 
   final List<PrecoMaterialModel> precos;
 
-  /// Só se informa preço de um material que o fornecedor fornece.
+  /// Só se informa preço de um grupo que o fornecedor fornece.
   final bool podeAdicionar;
   final VoidCallback onAdicionar;
   final ValueChanged<PrecoMaterialModel> onEditar;
@@ -31,7 +31,9 @@ class FornecedorPrecos extends StatelessWidget {
         Spacing.sm.vertical,
         if (precos.isEmpty)
           Text(
-            podeAdicionar ? 'Nenhum preço informado.' : 'Adicione um material para informar o preço dele.',
+            podeAdicionar
+                ? 'Nenhum preço informado.'
+                : 'Adicione um grupo de compra para informar os preços.',
             style: SimTypography.bodySmRegular.copyWith(color: SimTokens.colorNeutral500),
           ),
         for (final (i, preco) in precos.indexed) ...[
